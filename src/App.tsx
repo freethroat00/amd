@@ -10,7 +10,7 @@ import type { MonthData, WorkRate } from './types';
 import './App.css';
 
 function App() {
-  const { user, profile, loading, signUp, signIn, signOut } = useAuth();
+  const { user, profile, loading, anonymousSignIn, signOut } = useAuth();
   const { months, notes, loading: dataLoading, saveMonth, addNote, removeNote } = useRemoteData(user?.id ?? null);
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -65,7 +65,7 @@ function App() {
   }
 
   if (!user) {
-    return <Login onSignUp={signUp} onSignIn={signIn} />;
+    return <Login onAnonymousSignIn={anonymousSignIn} />;
   }
 
   if (showDashboard && profile?.role === 'admin') {
@@ -76,7 +76,7 @@ function App() {
     <div className="App">
       <main className="App-main">
         <div className="user-bar">
-          <div className="user-name">{profile?.name || user.email?.split('@')[0]}</div>
+          <div className="user-name">{profile?.name || 'гость'}</div>
           <div className="user-actions">
             {profile?.role === 'admin' && (
               <button className="user-action" onClick={() => setShowDashboard(true)}>дашборд</button>
@@ -84,7 +84,6 @@ function App() {
             <button className="user-action" onClick={signOut}>выйти</button>
           </div>
         </div>
-
         <SalaryCalculator
           monthData={monthData}
           currentYear={currentYear}
@@ -94,7 +93,6 @@ function App() {
           onNavigateMonth={navigateMonth}
           onGoToToday={goToToday}
         />
-
         <Notes
           notes={notes}
           onAdd={addNote}

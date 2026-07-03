@@ -47,21 +47,18 @@ export const useAuth = () => {
     setLoading(false);
   };
 
-  const signUp = useCallback(async (email: string, password: string, name: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { name } }
-    });
-    return { data, error };
-  }, []);
-
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    return { data, error };
+  const anonymousSignIn = useCallback(async (name: string) => {
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) return { error };
+    if (data.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        email: data.user.id + '@anon.local',
+        name: name,
+        role: 'user'
+      }, { onConflict: 'id' });
+    }
+    return { error: null };
   }, []);
 
   const signOut = useCallback(async () => {
@@ -70,5 +67,5 @@ export const useAuth = () => {
     setProfile(null);
   }, []);
 
-  return { user, profile, loading, signUp, signIn, signOut };
+  return { user, profile, loading, anonymousSignIn, signOut };
 };
