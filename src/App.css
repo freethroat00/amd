@@ -30,3 +30,30 @@
   text-align: center;
 }
 .clear-text:active { color: #ff3b30; }
+
+.user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: capitalize;
+}
+.user-actions {
+  display: flex;
+  gap: 12px;
+}
+.user-action {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.user-action:active { color: var(--accent); }

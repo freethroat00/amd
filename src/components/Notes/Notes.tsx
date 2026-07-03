@@ -1,15 +1,20 @@
 import { useState } from 'react';
-import { useNotes } from '../../hooks/useNotes';
+import type { Note } from '../../types';
 import './Notes.css';
 
-export const Notes: React.FC = () => {
-  const { notes, addNote, removeNote } = useNotes();
+interface NotesProps {
+  notes: Note[];
+  onAdd: (text: string) => void;
+  onRemove: (id: string) => void;
+}
+
+export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
   const [input, setInput] = useState('');
   const [showInput, setShowInput] = useState(false);
 
   const handleSubmit = () => {
     if (input.trim()) {
-      addNote(input);
+      onAdd(input);
       setInput('');
       setShowInput(false);
     }
@@ -51,7 +56,7 @@ export const Notes: React.FC = () => {
         {notes.map(note => (
           <div key={note.id} className="notes-card">
             <div className="notes-card-text">{note.text}</div>
-            <button className="notes-card-del" onClick={() => removeNote(note.id)}>×</button>
+            <button className="notes-card-del" onClick={() => onRemove(note.id)}>×</button>
           </div>
         ))}
       </div>
