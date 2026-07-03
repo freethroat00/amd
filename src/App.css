@@ -1,0 +1,32 @@
+.App {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 150% 80% at 50% 0%, rgba(52,199,89,0.06) 0%, transparent 60%);
+}
+.App-main {
+  flex: 1;
+  padding: 24px 16px 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .App-main { padding: 40px 32px 32px; max-width: 520px; }
+}
+.clear-text {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+.clear-text:active { color: #ff3b30; }

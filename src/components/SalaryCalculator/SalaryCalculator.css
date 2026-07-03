@@ -1,0 +1,46 @@
+.sc {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+@media (min-width: 768px) { .sc { gap: 20px; } }
+
+.sc-total {
+  background: var(--bg-panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.sc-total-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+.sc-total-val {
+  font-size: 3.8rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2px;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+.sc-total-val.sc-zero { color: var(--text-dim); opacity: 0.4; }
+.sc-total-val.sc-active { color: var(--text); opacity: 1; }
+.sc-total-cur {
+  font-size: 3.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+.sc-total-days {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-top: 6px;
+  text-transform: lowercase;
+}

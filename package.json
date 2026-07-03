@@ -1,0 +1,33 @@
+{
+  "name": "salary-calculator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "test": "jest --config jest.config.cjs"
+  },
+  "dependencies": {
+    "date-fns": "^4.4.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "uuid": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-react": "^6.0.3",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "oxlint": "^1.71.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  }
+}

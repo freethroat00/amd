@@ -1,0 +1,44 @@
+:root {
+  --bg: #f2f2f7;
+  --bg-panel: rgba(255,255,255,0.72);
+  --bg-cell: rgba(255,255,255,0.55);
+  --bg-cell-hover: rgba(255,255,255,0.85);
+  --border: rgba(0,0,0,0.06);
+  --border-strong: rgba(0,0,0,0.12);
+  --text: #1c1c1e;
+  --text-dim: #8e8e93;
+  --accent: #34c759;
+  --pzv: #34c759;
+  --pzv-bg: rgba(52,199,89,0.1);
+  --kbt: #007aff;
+  --kbt-bg: rgba(0,122,255,0.1);
+  --region: #ff9500;
+  --region-bg: rgba(255,149,0,0.1);
+  --today: #ff6a00;
+  --load: #af52de;
+  --load-bg: rgba(175,82,222,0.1);
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif;
+  --shadow: 0 1px 4px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.08);
+  --radius: 20px;
+  --radius-sm: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+#root { min-height: 100vh; min-height: 100dvh; }
+::selection { background: var(--accent); color: #fff; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+button { touch-action: manipulation; font-family: var(--font); }
