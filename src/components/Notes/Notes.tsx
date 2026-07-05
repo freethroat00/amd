@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Note } from '../../types';
+import { haptic } from '../../utils/haptic';
 import './Notes.css';
 
 interface NotesProps {
@@ -29,7 +30,7 @@ export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
     <div className="notes">
       <div className="notes-header">
         <span className="notes-title">заметки</span>
-        <button className="notes-add-btn" onClick={() => setShowInput(true)}>+</button>
+        <button className="notes-add-btn" onClick={() => { haptic(); setShowInput(true); }}>+</button>
       </div>
 
       {showInput && (
@@ -42,7 +43,7 @@ export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
             onKeyDown={handleKeyDown}
             autoFocus
           />
-          <button className="notes-submit-btn" onClick={handleSubmit}>ok</button>
+          <button className="notes-submit-btn" onClick={() => { haptic(); handleSubmit(); }}>ok</button>
         </div>
       )}
 
@@ -56,7 +57,7 @@ export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
         {notes.map(note => (
           <div key={note.id} className="notes-card">
             <div className="notes-card-text">{note.text}</div>
-            <button className="notes-card-del" onClick={() => onRemove(note.id)}>×</button>
+            <button className="notes-card-del" onClick={() => { haptic(); onRemove(note.id); }}>×</button>
           </div>
         ))}
       </div>

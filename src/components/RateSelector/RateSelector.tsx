@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { WorkRate, RateType, RegionDetails } from '../../types';
 import { DEFAULT_RATE_CONFIG } from '../../types';
 import { RATE_LABELS, RATE_COLORS } from '../../utils/salaryCalculations';
+import { haptic } from '../../utils/haptic';
 import './RateSelector.css';
 
 interface RateSelectorProps {
@@ -54,6 +55,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
   };
 
   const handleClick = (type: RateType) => {
+    haptic();
     const key = 'rate_' + type;
     if (timers.current.has(key)) {
       clearTimeout(timers.current.get(key)!);
@@ -100,7 +102,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
   const getErrandsAmount = () => currentRates.find(r => r.type === 'errands')?.errandsAmount ?? 0;
 
   return (
-    <div className={'rs-overlay' + (visible ? ' rs-visible' : '')} onClick={onClose}>
+    <div className={'rs-overlay' + (visible ? ' rs-visible' : '')} onClick={() => { haptic(); onClose(); }}>
       <div className={'rs-modal' + (visible ? ' rs-visible' : '')} onClick={e => e.stopPropagation()}>
         <div className="rs-options">
           {/* Минск */}

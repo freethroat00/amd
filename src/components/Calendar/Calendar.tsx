@@ -1,6 +1,7 @@
 import type { MonthData } from '../../types';
 import { DayCell } from './DayCell';
 import { getDaysInMonth } from '../../utils/salaryCalculations';
+import { haptic } from '../../utils/haptic';
 import './Calendar.css';
 
 interface CalendarProps {
@@ -56,11 +57,11 @@ export const Calendar: React.FC<CalendarProps> = ({
   return (
     <div className="cal">
       <div className="cal-nav">
-        <button onClick={() => onNavigateMonth('prev')} className="cal-nav-btn">{'<'}</button>
+        <button onClick={() => { haptic(); onNavigateMonth('prev'); }} className="cal-nav-btn">{'<'}</button>
         <div className="cal-month">{MONTH_NAMES[currentMonth]} {currentYear}</div>
-        <button onClick={() => onNavigateMonth('next')} className="cal-nav-btn">{'>'}</button>
+        <button onClick={() => { haptic(); onNavigateMonth('next'); }} className="cal-nav-btn">{'>'}</button>
       </div>
-      <button onClick={onGoToToday} className="cal-today-btn">сегодня</button>
+      <button onClick={() => { haptic(); onGoToToday(); }} className="cal-today-btn">сегодня</button>
       <div className="cal-weekdays">
         {WEEK_DAYS.map((d, i) => (
           <div key={d} className={'cal-weekday' + (i === 2 || i === 5 ? ' cal-region-day' : '')}>{d}</div>
