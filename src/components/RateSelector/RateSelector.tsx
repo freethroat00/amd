@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import type { WorkRate, RateType, RegionDetails } from '../../types';
 import { DEFAULT_RATE_CONFIG } from '../../types';
 import { RATE_LABELS, RATE_COLORS } from '../../utils/salaryCalculations';
@@ -31,7 +31,6 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
   };
 
   const [regionDetails, setRegionDetails] = useState<RegionDetails>(getRegionDetails());
-  const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const toggleRate = (type: RateType) => {
     if (isRateSelected(type)) {
@@ -51,20 +50,6 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
       if (r.type !== type) return r;
       return { ...r, multiplier: (r.multiplier ?? 1) === 1 ? 0.5 : 1 };
     }));
-  };
-
-  const handleClick = (type: RateType) => {
-    const key = 'rate_' + type;
-    if (timers.current.has(key)) {
-      clearTimeout(timers.current.get(key)!);
-      timers.current.delete(key);
-      toggleMultiplier(type);
-    } else {
-      timers.current.set(key, setTimeout(() => {
-        timers.current.delete(key);
-        toggleRate(type);
-      }, 250));
-    }
   };
 
   const updateRegion = (updates: Partial<RegionDetails>) => {
@@ -107,7 +92,8 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
           <button
             data-color={RATE_COLORS.pzv}
             className={'rs-card' + (isRateSelected('pzv') ? ' rs-active' : '')}
-            onClick={() => handleClick('pzv')}
+            onClick={() => toggleRate('pzv')}
+            onDoubleClick={() => toggleMultiplier('pzv')}
           >
             <span className="rs-card-dot" style={isRateSelected('pzv') ? undefined : { backgroundColor: RATE_COLORS.pzv }} />
             <span className="rs-card-label" style={isRateSelected('pzv') ? undefined : { color: RATE_COLORS.pzv }}>
@@ -120,7 +106,8 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
           <button
             data-color={RATE_COLORS.region}
             className={'rs-card' + (regionSel ? ' rs-active' : '')}
-            onClick={() => handleClick('region')}
+            onClick={() => toggleRate('region')}
+            onDoubleClick={() => toggleMultiplier('region')}
           >
             <span className="rs-card-dot" style={regionSel ? undefined : { backgroundColor: RATE_COLORS.region }} />
             <span className="rs-card-label" style={regionSel ? undefined : { color: RATE_COLORS.region }}>
@@ -164,7 +151,8 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
           <button
             data-color={RATE_COLORS.kbt}
             className={'rs-card' + (isRateSelected('kbt') ? ' rs-active' : '')}
-            onClick={() => handleClick('kbt')}
+            onClick={() => toggleRate('kbt')}
+            onDoubleClick={() => toggleMultiplier('kbt')}
           >
             <span className="rs-card-dot" style={isRateSelected('kbt') ? undefined : { backgroundColor: RATE_COLORS.kbt }} />
             <span className="rs-card-label" style={isRateSelected('kbt') ? undefined : { color: RATE_COLORS.kbt }}>
