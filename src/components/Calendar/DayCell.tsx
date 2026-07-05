@@ -1,6 +1,5 @@
 import type { WorkDay, RateType } from '../../types';
 import { RATE_COLORS, RATE_BG } from '../../utils/salaryCalculations';
-import { haptic } from '../../utils/haptic';
 import './DayCell.css';
 
 interface DayCellProps {
@@ -37,7 +36,7 @@ export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToda
   }
 
   return (
-    <div className={cls} style={cellStyle} onClick={() => { haptic(); onSelectRates(workDay.date); }}>
+    <div className={cls} style={cellStyle} onClick={() => onSelectRates(workDay.date)}>
       <div className="cal-day-num" style={isToday && primaryType ? { color: '#fff', fontWeight: 800 } : primaryType && !isToday ? { color: RATE_COLORS[primaryType as RateType] } : isRegionDay && !isToday && !hasRates && !isWeekend ? { color: 'var(--region)' } : undefined}>
         {dayNumber}
       </div>
