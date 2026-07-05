@@ -37,6 +37,34 @@
 }
 .rs-options { display: flex; flex-direction: column; gap: 8px; }
 
+/* Card row with x0.5 button */
+.rs-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rs-card-row .rs-card { flex: 1; }
+.rs-x05 {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1.5px solid var(--border-strong);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font);
+}
+.rs-x05:active { transform: scale(0.92); }
+.rs-x05-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
 /* Rate cards - белые, заливаются при .rs-active */
 .rs-card {
   display: flex;
