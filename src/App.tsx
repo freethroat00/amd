@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { useRemoteData } from './hooks/useRemoteData';
+import { useTheme } from './hooks/useTheme';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { SalaryCalculator } from './components/SalaryCalculator/SalaryCalculator';
@@ -12,6 +13,7 @@ import './App.css';
 function App() {
   const { user, profile, loading, anonymousSignIn } = useAuth();
   const { months, notes, loading: dataLoading, saveMonth, addNote, removeNote } = useRemoteData(user?.id ?? null);
+  const { theme, toggle: toggleTheme } = useTheme();
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -68,6 +70,9 @@ function App() {
         <div className="user-bar">
           <div className="user-name">{profile?.name || 'гость'}</div>
           <div className="user-actions">
+            <button className="user-action" onClick={toggleTheme}>
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
             {profile?.role === 'admin' && (
               <button className="user-action" onClick={() => setShowDashboard(true)}>дашборд</button>
             )}

@@ -23,6 +23,18 @@
   --radius: 20px;
   --radius-sm: 14px;
 }
+.dark {
+  --bg: #1c1c1e;
+  --bg-panel: rgba(44,44,46,0.72);
+  --bg-cell: rgba(44,44,46,0.55);
+  --bg-cell-hover: rgba(44,44,46,0.85);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.15);
+  --text: #f2f2f7;
+  --text-dim: #636366;
+  --shadow: 0 1px 4px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.15);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.3);
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: var(--font);
