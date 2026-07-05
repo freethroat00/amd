@@ -37,13 +37,13 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
     const diff = target - start;
     if (diff === 0) return;
 
-    const duration = 600;
+    const duration = 1000;
     const startTime = performance.now();
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 0.5 * (1 - Math.cos(Math.PI * progress));
       setDisplayValue(Math.round(start + diff * eased));
       if (progress < 1) {
         animRef.current = requestAnimationFrame(animate);

@@ -10,7 +10,7 @@ import type { MonthData, WorkRate } from './types';
 import './App.css';
 
 function App() {
-  const { user, profile, loading, anonymousSignIn, signOut } = useAuth();
+  const { user, profile, loading, anonymousSignIn } = useAuth();
   const { months, notes, loading: dataLoading, saveMonth, addNote, removeNote } = useRemoteData(user?.id ?? null);
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -71,7 +71,6 @@ function App() {
             {profile?.role === 'admin' && (
               <button className="user-action" onClick={() => setShowDashboard(true)}>дашборд</button>
             )}
-            <button className="user-action" onClick={signOut}>выйти</button>
           </div>
         </div>
         <SalaryCalculator
