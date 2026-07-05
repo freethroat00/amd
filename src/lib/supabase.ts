@@ -7,8 +7,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    url: `${supabaseUrl}/auth/v1`,
-  },
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
