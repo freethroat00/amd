@@ -45,13 +45,24 @@ export const useRemoteData = (userId: string | null) => {
 
   const saveMonth = useCallback(async (year: number, month: number, days: any[]) => {
     if (!userId) return;
-    await supabase.from('months').upsert({
+    const { error } = await supabase.from('months').upsert({
       user_id: userId,
       year,
       month,
       data: days,
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_id,year,month' });
+    if (!error) {
+      setMonths(prev => {
+        const idx = prev.findIndex(m => m.year === year && m.month === month);
+        if (idx !== -1) {
+          const updated = [...prev];
+          updated[idx] = { year, month, days };
+          return updated;
+        }
+        return [...prev, { year, month, days }];
+      });
+    }
   }, [userId]);
 
   const addNote = useCallback(async (text: string) => {
