@@ -10,7 +10,7 @@
 .notes-add-btn:active { transform: scale(0.9); }
 .notes-input-wrap { display: flex; gap: 8px; margin-bottom: 10px; }
 .notes-input {
-  flex: 1; background: #fff; border: none;
+  flex: 1; background: var(--bg-cell); border: none;
   border-radius: 999px; padding: 10px 14px; font-size: 0.85rem;
   font-weight: 600; color: var(--text); outline: none; font-family: var(--font);
 }
@@ -27,7 +27,7 @@
 }
 .notes-list { display: flex; flex-direction: column; gap: 6px; }
 .notes-card {
-  background: #fff; border: none; border-radius: 999px;
+  background: var(--bg-cell); border: none; border-radius: 999px;
   padding: 12px 14px; display: flex; align-items: center; gap: 10px;
   animation: noteIn 0.2s ease;
 }
