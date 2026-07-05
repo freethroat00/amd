@@ -222,7 +222,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                 </button>
 
                 {/* Поручения */}
-                <div className={'rs-pill rs-pill-toggle' + (errandsSel ? ' rs-pill-active' : '')}>
+                <div className={'rs-pill' + (errandsSel ? ' rs-pill-active' : '')}>
                   <span className="rs-pill-label">Поручения</span>
                   <input
                     type="number" min="0" placeholder="0"
@@ -242,12 +242,6 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                     }}
                     className="rs-pill-input"
                   />
-                  {errandsSel && (
-                    <button
-                      className="rs-pill-remove"
-                      onClick={() => onToggleRate(currentRates.filter(r => r.type !== 'errands'))}
-                    >×</button>
-                  )}
                 </div>
               </div>
             </div>

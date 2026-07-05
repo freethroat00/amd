@@ -6,8 +6,8 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.12s ease;
-  background: transparent;
-  border: 1px solid transparent;
+  background: var(--bg-cell);
+  border: 1px solid var(--border-strong);
   border-radius: 14px;
   position: relative;
 }
@@ -15,7 +15,7 @@
 .cal-today { background: var(--today) !important; border-color: transparent !important; box-shadow: 0 2px 10px rgba(255,106,0,0.25); }
 .cal-today .cal-day-num { color: #fff !important; font-weight: 800; }
 .cal-today-colored .cal-day-num { color: #fff !important; font-weight: 800; }
-.cal-today-empty { border: 2px solid var(--text-dim) !important; }
+.cal-today-empty { border: 2px solid var(--text) !important; }
 .cal-today-empty .cal-day-num { color: var(--text) !important; font-weight: 700; }
 .cal-today-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text); margin-top: 2px; }
 .cal-we { background: transparent; }
