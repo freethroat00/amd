@@ -11,7 +11,8 @@
 .notes-list { display: flex; flex-direction: column; gap: 6px; }
 .notes-card {
   background: var(--bg-cell); border: none; border-radius: 999px;
-  padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  min-height: 42px;
   animation: noteIn 0.2s ease;
 }
 @keyframes noteIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }

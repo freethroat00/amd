@@ -222,7 +222,14 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                 </button>
 
                 {/* Поручения */}
-                <div className={'rs-pill' + (errandsSel ? ' rs-pill-active' : '')}>
+                <div
+                  className={'rs-pill rs-pill-toggle' + (errandsSel ? ' rs-pill-active' : '')}
+                  onClick={() => {
+                    if (errandsSel && getErrandsAmount() === 0) {
+                      onToggleRate(currentRates.filter(r => r.type !== 'errands'));
+                    }
+                  }}
+                >
                   <span className="rs-pill-label">Поручения</span>
                   <input
                     type="number" min="0" placeholder="0"
@@ -231,6 +238,8 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                       const val = e.target.value === '' ? 0 : Number(e.target.value);
                       if (!errandsSel) {
                         onToggleRate([...currentRates, { type: 'errands', errandsAmount: val }]);
+                      } else if (val === 0) {
+                        onToggleRate(currentRates.filter(r => r.type !== 'errands'));
                       } else {
                         onToggleRate(currentRates.map(r => r.type === 'errands' ? { ...r, errandsAmount: val } : r));
                       }
@@ -241,6 +250,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                       }
                     }}
                     className="rs-pill-input"
+                    onClick={e => e.stopPropagation()}
                   />
                 </div>
               </div>
