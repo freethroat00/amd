@@ -26,8 +26,8 @@
 .dark {
   --bg: #1c1c1e;
   --bg-panel: rgba(44,44,46,0.72);
-  --bg-cell: rgba(44,44,46,0.55);
-  --bg-cell-hover: rgba(44,44,46,0.85);
+  --bg-cell: rgba(58,58,60,0.65);
+  --bg-cell-hover: rgba(58,58,60,0.85);
   --border: rgba(255,255,255,0.08);
   --border-strong: rgba(255,255,255,0.15);
   --text: #f2f2f7;

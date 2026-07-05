@@ -14,14 +14,20 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
   currentRates, onToggleRate, onClose
 }) => {
   const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [showExtras, setShowExtras] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true));
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, []);
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(() => onClose(), 300);
+  };
 
   const isRateSelected = (type: RateType) => currentRates.some(r => r.type === type);
 
@@ -85,7 +91,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
   const getErrandsAmount = () => currentRates.find(r => r.type === 'errands')?.errandsAmount ?? 0;
 
   return (
-    <div className={'rs-overlay' + (visible ? ' rs-visible' : '')} onClick={onClose}>
+    <div className={'rs-overlay' + (visible ? ' rs-visible' : '') + (closing ? ' rs-closing' : '')} onClick={handleClose}>
       <div className={'rs-modal' + (visible ? ' rs-visible' : '')} onClick={e => e.stopPropagation()}>
         <div className="rs-options">
           {/* Минск */}

@@ -13,7 +13,7 @@ import './App.css';
 function App() {
   const { user, profile, loading, anonymousSignIn } = useAuth();
   const { months, notes, loading: dataLoading, saveMonth, addNote, removeNote } = useRemoteData(user?.id ?? null);
-  const { theme, toggle: toggleTheme } = useTheme();
+  const { toggle: toggleTheme } = useTheme();
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -70,8 +70,10 @@ function App() {
         <div className="user-bar">
           <div className="user-name">{profile?.name || 'гость'}</div>
           <div className="user-actions">
-            <button className="user-action" onClick={toggleTheme}>
-              {theme === 'dark' ? '☀️' : '🌙'}
+            <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+              <span className="theme-toggle-track">
+                <span className="theme-toggle-thumb" />
+              </span>
             </button>
             {profile?.role === 'admin' && (
               <button className="user-action" onClick={() => setShowDashboard(true)}>дашборд</button>

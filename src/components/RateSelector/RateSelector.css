@@ -13,13 +13,15 @@
   transition: opacity 0.2s ease;
 }
 .rs-overlay.rs-visible { opacity: 1; }
+.rs-overlay.rs-closing { opacity: 0; }
+.rs-overlay.rs-closing .rs-modal { transform: translateY(100%); opacity: 0; }
 @media (min-width: 768px) { .rs-overlay { align-items: center; } }
 .rs-modal {
   background: var(--bg-panel);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--border);
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
   padding: 20px 16px 24px;
   width: 100%;
   max-width: 400px;
@@ -50,7 +52,7 @@
   height: 44px;
   border-radius: 14px;
   border: 1.5px solid var(--border-strong);
-  background: #fff;
+  background: var(--bg-cell);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-dim);
@@ -71,7 +73,7 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  background: #fff;
+  background: var(--bg-cell);
   border: 1.5px solid var(--border-strong);
   border-radius: 999px;
   padding: 14px 16px;
@@ -114,7 +116,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  background: #fff;
+  background: var(--bg-cell);
   border: 1.5px solid var(--border-strong);
   border-radius: 999px;
   padding: 10px 6px;
@@ -155,7 +157,7 @@
   margin-top: 12px;
   text-align: center;
   padding: 14px;
-  background: #fff;
+  background: var(--bg-cell);
   border: 1px solid var(--border-strong);
   border-radius: 999px;
 }
