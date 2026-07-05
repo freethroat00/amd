@@ -40,20 +40,14 @@
 .rs-options { display: flex; flex-direction: column; gap: 8px; }
 
 /* Card row with x0.5 button */
-.rs-card-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.rs-card-row .rs-card { flex: 1; }
 .rs-x05 {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
   border: 1.5px solid var(--border-strong);
   background: var(--bg-cell);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-dim);
   cursor: pointer;
@@ -62,8 +56,8 @@
 }
 .rs-x05:active { transform: scale(0.92); }
 .rs-x05-active {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: #fff;
+  background: rgba(255,255,255,0.3);
   color: #fff;
 }
 

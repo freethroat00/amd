@@ -95,26 +95,24 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
       <div className={'rs-modal' + (visible ? ' rs-visible' : '')} onClick={e => e.stopPropagation()}>
         <div className="rs-options">
           {/* Минск */}
-          <div className="rs-card-row">
-            <button
-              data-color={RATE_COLORS.pzv}
-              className={'rs-card' + (isRateSelected('pzv') ? ' rs-active' : '')}
-              onClick={() => toggleRate('pzv')}
-            >
-              <span className="rs-card-dot" style={isRateSelected('pzv') ? undefined : { backgroundColor: RATE_COLORS.pzv }} />
-              <span className="rs-card-label" style={isRateSelected('pzv') ? undefined : { color: RATE_COLORS.pzv }}>
-                {RATE_LABELS.pzv}
-              </span>
-            </button>
+          <button
+            data-color={RATE_COLORS.pzv}
+            className={'rs-card' + (isRateSelected('pzv') ? ' rs-active' : '')}
+            onClick={() => toggleRate('pzv')}
+          >
+            <span className="rs-card-dot" style={isRateSelected('pzv') ? undefined : { backgroundColor: RATE_COLORS.pzv }} />
+            <span className="rs-card-label" style={isRateSelected('pzv') ? undefined : { color: RATE_COLORS.pzv }}>
+              {RATE_LABELS.pzv}
+            </span>
             {isRateSelected('pzv') && (
               <button
                 className={'rs-x05' + (getM('pzv') === 0.5 ? ' rs-x05-active' : '')}
-                onClick={() => toggleMultiplier('pzv')}
+                onClick={(e) => { e.stopPropagation(); toggleMultiplier('pzv'); }}
               >
                 x0.5
               </button>
             )}
-          </div>
+          </button>
 
           {/* Регион */}
           <button
@@ -161,26 +159,24 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
           )}
 
           {/* КБТ */}
-          <div className="rs-card-row">
-            <button
-              data-color={RATE_COLORS.kbt}
-              className={'rs-card' + (isRateSelected('kbt') ? ' rs-active' : '')}
-              onClick={() => toggleRate('kbt')}
-            >
-              <span className="rs-card-dot" style={isRateSelected('kbt') ? undefined : { backgroundColor: RATE_COLORS.kbt }} />
-              <span className="rs-card-label" style={isRateSelected('kbt') ? undefined : { color: RATE_COLORS.kbt }}>
-                {RATE_LABELS.kbt}
-              </span>
-            </button>
+          <button
+            data-color={RATE_COLORS.kbt}
+            className={'rs-card' + (isRateSelected('kbt') ? ' rs-active' : '')}
+            onClick={() => toggleRate('kbt')}
+          >
+            <span className="rs-card-dot" style={isRateSelected('kbt') ? undefined : { backgroundColor: RATE_COLORS.kbt }} />
+            <span className="rs-card-label" style={isRateSelected('kbt') ? undefined : { color: RATE_COLORS.kbt }}>
+              {RATE_LABELS.kbt}
+            </span>
             {isRateSelected('kbt') && (
               <button
                 className={'rs-x05' + (getM('kbt') === 0.5 ? ' rs-x05-active' : '')}
-                onClick={() => toggleMultiplier('kbt')}
+                onClick={(e) => { e.stopPropagation(); toggleMultiplier('kbt'); }}
               >
                 x0.5
               </button>
             )}
-          </div>
+          </button>
 
           {/* Допы */}
           <button

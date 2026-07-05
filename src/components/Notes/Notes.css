@@ -1,26 +1,13 @@
 .notes { margin-top: 14px; }
 .notes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .notes-title { font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: capitalize; letter-spacing: 0.3px; }
-.notes-add-btn {
-  width: 30px; height: 30px; border-radius: 999px; border: none;
-  background: var(--accent); color: #fff; font-size: 1.1rem; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
-  transition: all 0.15s ease; line-height: 1;
-}
-.notes-add-btn:active { transform: scale(0.9); }
-.notes-input-wrap { display: flex; gap: 8px; margin-bottom: 10px; }
+.notes-input-wrap { margin-bottom: 10px; }
 .notes-input {
-  flex: 1; background: var(--bg-cell); border: none;
-  border-radius: 999px; padding: 10px 14px; font-size: 0.85rem;
+  width: 100%; background: var(--bg-cell); border: none;
+  border-radius: 999px; padding: 12px 16px; font-size: 0.85rem;
   font-weight: 600; color: var(--text); outline: none; font-family: var(--font);
 }
-.notes-input:focus { border-color: var(--accent); }
-.notes-submit-btn {
-  background: var(--accent); color: #fff; border: none;
-  border-radius: 999px; padding: 10px 16px; font-size: 0.85rem;
-  font-weight: 700; cursor: pointer; font-family: var(--font);
-}
-.notes-submit-btn:active { transform: scale(0.95); }
+.notes-input::placeholder { color: var(--text-dim); opacity: 0.5; }
 .notes-empty {
   background: var(--bg-panel); border: none; border-radius: 999px;
   padding: 20px; text-align: center; color: var(--text-dim); font-size: 0.8rem; font-weight: 600;

@@ -9,7 +9,6 @@ interface CalendarProps {
   currentMonth: number;
   onSelectRates: (date: string) => void;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
-  onGoToToday: () => void;
 }
 
 const MONTH_NAMES = [
@@ -20,7 +19,7 @@ const WEEK_DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 export const Calendar: React.FC<CalendarProps> = ({
   monthData, currentYear, currentMonth,
-  onSelectRates, onNavigateMonth, onGoToToday
+  onSelectRates, onNavigateMonth
 }) => {
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const today = new Date();
@@ -60,7 +59,6 @@ export const Calendar: React.FC<CalendarProps> = ({
         <div className="cal-month">{MONTH_NAMES[currentMonth]} {currentYear}</div>
         <button onClick={() => onNavigateMonth('next')} className="cal-nav-btn">{'>'}</button>
       </div>
-      <button onClick={onGoToToday} className="cal-today-btn">сегодня</button>
       <div className="cal-weekdays">
         {WEEK_DAYS.map((d, i) => (
           <div key={d} className={'cal-weekday' + (i === 2 || i === 5 ? ' cal-region-day' : '')}>{d}</div>

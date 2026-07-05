@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { Note } from '../../types';
 import './Notes.css';
 
@@ -10,45 +10,39 @@ interface NotesProps {
 
 export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
   const [input, setInput] = useState('');
-  const [showInput, setShowInput] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = () => {
     if (input.trim()) {
       onAdd(input);
       setInput('');
-      setShowInput(false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSubmit();
-    if (e.key === 'Escape') { setShowInput(false); setInput(''); }
   };
 
   return (
     <div className="notes">
       <div className="notes-header">
         <span className="notes-title">заметки</span>
-        <button className="notes-add-btn" onClick={() => setShowInput(true)}>+</button>
       </div>
 
-      {showInput && (
-        <div className="notes-input-wrap">
-          <input
-            className="notes-input"
-            placeholder="новая заметка..."
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoFocus
-          />
-          <button className="notes-submit-btn" onClick={handleSubmit}>ok</button>
-        </div>
-      )}
+      <div className="notes-input-wrap">
+        <input
+          ref={inputRef}
+          className="notes-input"
+          placeholder="написать заметку..."
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
 
-      {notes.length === 0 && !showInput && (
+      {notes.length === 0 && !input && (
         <div className="notes-empty">
-          нажмите + чтобы добавить заметку
+          нажмите и напишите заметку
         </div>
       )}
 

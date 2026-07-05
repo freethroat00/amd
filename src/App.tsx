@@ -44,8 +44,6 @@ function App() {
     });
   };
 
-  const goToToday = () => setCurrentDate(new Date());
-
   if (loading || dataLoading) {
     return (
       <div className="App">
@@ -86,7 +84,6 @@ function App() {
           currentMonth={currentMonth}
           onUpdateRates={updateRates}
           onNavigateMonth={navigateMonth}
-          onGoToToday={goToToday}
         />
         <Notes
           notes={notes}
