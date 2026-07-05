@@ -45,11 +45,11 @@
   height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1.5px solid var(--border-strong);
-  background: var(--bg-cell);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15);
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-dim);
+  color: rgba(255,255,255,0.8);
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: var(--font);
@@ -57,9 +57,20 @@
 .rs-x05:active { transform: scale(0.92); }
 .rs-x05-active {
   border-color: #fff;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.35);
   color: #fff;
 }
+
+.rs-pill-remove {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.rs-pill-remove:active { color: #ff3b30; }
 
 /* Rate cards - белые, заливаются при .rs-active */
 .rs-card {
@@ -145,6 +156,7 @@
 }
 .rs-pill.rs-pill-active .rs-pill-label { color: #fff; }
 .rs-pill.rs-pill-active .rs-pill-input { color: #fff; }
+.rs-pill.rs-pill-active .rs-pill-remove { color: rgba(255,255,255,0.7); }
 
 /* Preview */
 .rs-preview {
