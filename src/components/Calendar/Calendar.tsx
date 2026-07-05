@@ -41,7 +41,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
       const workDay = monthData.days.find(d => d.date === dateStr);
       const dow = new Date(currentYear, currentMonth, day).getDay();
-      const isRegionDay = dow === 3 || dow === 6;
+      const isRegionDay = (dow === 3 || dow === 6) && !!workDay && workDay.rates.some(r => r.type === 'region');
       const isSunday = dow === 0;
       const isWeekend = dow === 0 || dow === 6;
       if (workDay) {

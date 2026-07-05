@@ -6,17 +6,15 @@ import './RateSelector.css';
 
 interface RateSelectorProps {
   currentRates: WorkRate[];
-  hasLoading: boolean;
   onToggleRate: (rates: WorkRate[]) => void;
-  onToggleLoading: (v: boolean) => void;
   onClose: () => void;
 }
 
 export const RateSelector: React.FC<RateSelectorProps> = ({
-  currentRates, hasLoading,
-  onToggleRate, onToggleLoading, onClose
+  currentRates, onToggleRate, onClose
 }) => {
   const [visible, setVisible] = useState(false);
+  const [showExtras, setShowExtras] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true));
@@ -39,7 +37,11 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
     if (isRateSelected(type)) {
       onToggleRate(currentRates.filter(r => r.type !== type));
     } else {
-      const nr: WorkRate = type === 'region' ? { type, regionDetails } : { type };
+      const nr: WorkRate = type === 'region'
+        ? { type, regionDetails }
+        : type === 'errands'
+          ? { type, errandsAmount: 0 }
+          : { type };
       onToggleRate([...currentRates, nr]);
     }
   };
@@ -83,45 +85,38 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
         + (r.regionDetails.tips || 0);
       return sum + base * m;
     }
+    if (r.type === 'loading') return sum + DEFAULT_RATE_CONFIG.loadingBonus * m;
+    if (r.type === 'carwash') return sum + DEFAULT_RATE_CONFIG.loadingBonus;
+    if (r.type === 'errands') return sum + (r.errandsAmount || 0);
     return sum;
-  }, hasLoading ? DEFAULT_RATE_CONFIG.loadingBonus : 0);
+  }, 0);
 
   const regionSel = isRateSelected('region');
+  const extrasSel = isRateSelected('loading') || isRateSelected('carwash') || isRateSelected('errands');
+  const loadingSel = isRateSelected('loading');
+  const carwashSel = isRateSelected('carwash');
+  const errandsSel = isRateSelected('errands');
+
+  const getErrandsAmount = () => currentRates.find(r => r.type === 'errands')?.errandsAmount ?? 0;
 
   return (
     <div className={'rs-overlay' + (visible ? ' rs-visible' : '')} onClick={onClose}>
       <div className={'rs-modal' + (visible ? ' rs-visible' : '')} onClick={e => e.stopPropagation()}>
         <div className="rs-options">
-          {(['pzv', 'kbt'] as RateType[]).map(type => {
-            const sel = isRateSelected(type);
-            const m = getM(type);
-            return (
-              <button
-                key={type}
-                data-color={RATE_COLORS[type]}
-                className={'rs-card' + (sel ? ' rs-active' : '')}
-                onClick={() => handleClick(type)}
-              >
-                <span className="rs-card-dot" style={sel ? undefined : { backgroundColor: RATE_COLORS[type] }} />
-                <span className="rs-card-label" style={sel ? undefined : { color: RATE_COLORS[type] }}>
-                  {RATE_LABELS[type]}
-                </span>
-                {sel && m === 0.5 && <span className="rs-card-mult">x0.5</span>}
-              </button>
-            );
-          })}
-
+          {/* Минск */}
           <button
-            data-color="#af52de"
-            className={'rs-card' + (hasLoading ? ' rs-active' : '')}
-            onClick={() => onToggleLoading(!hasLoading)}
+            data-color={RATE_COLORS.pzv}
+            className={'rs-card' + (isRateSelected('pzv') ? ' rs-active' : '')}
+            onClick={() => handleClick('pzv')}
           >
-            <span className="rs-card-dot" style={hasLoading ? undefined : { backgroundColor: 'var(--load)' }} />
-            <span className="rs-card-label" style={hasLoading ? undefined : { color: 'var(--load)' }}>
-              Загрузка
+            <span className="rs-card-dot" style={isRateSelected('pzv') ? undefined : { backgroundColor: RATE_COLORS.pzv }} />
+            <span className="rs-card-label" style={isRateSelected('pzv') ? undefined : { color: RATE_COLORS.pzv }}>
+              {RATE_LABELS.pzv}
             </span>
+            {isRateSelected('pzv') && getM('pzv') === 0.5 && <span className="rs-card-mult">x0.5</span>}
           </button>
 
+          {/* Регион */}
           <button
             data-color={RATE_COLORS.region}
             className={'rs-card' + (regionSel ? ' rs-active' : '')}
@@ -161,6 +156,88 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                 >
                   <span className="rs-pill-label">Командиры</span>
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* КБТ */}
+          <button
+            data-color={RATE_COLORS.kbt}
+            className={'rs-card' + (isRateSelected('kbt') ? ' rs-active' : '')}
+            onClick={() => handleClick('kbt')}
+          >
+            <span className="rs-card-dot" style={isRateSelected('kbt') ? undefined : { backgroundColor: RATE_COLORS.kbt }} />
+            <span className="rs-card-label" style={isRateSelected('kbt') ? undefined : { color: RATE_COLORS.kbt }}>
+              {RATE_LABELS.kbt}
+            </span>
+            {isRateSelected('kbt') && getM('kbt') === 0.5 && <span className="rs-card-mult">x0.5</span>}
+          </button>
+
+          {/* Допы */}
+          <button
+            data-color="#af52de"
+            className={'rs-card' + (extrasSel ? ' rs-active' : '')}
+            onClick={() => setShowExtras(!showExtras)}
+          >
+            <span className="rs-card-dot" style={extrasSel ? undefined : { backgroundColor: '#af52de' }} />
+            <span className="rs-card-label" style={extrasSel ? undefined : { color: '#af52de' }}>
+              Допы
+            </span>
+          </button>
+
+          {showExtras && (
+            <div className="rs-region-block">
+              <div className="rs-pill-row">
+                {/* Загрузка */}
+                <button
+                  className={'rs-pill rs-pill-toggle' + (loadingSel ? ' rs-pill-active' : '')}
+                  onClick={() => {
+                    if (loadingSel) {
+                      onToggleRate(currentRates.filter(r => r.type !== 'loading'));
+                    } else {
+                      onToggleRate([...currentRates, { type: 'loading' }]);
+                    }
+                  }}
+                >
+                  <span className="rs-pill-label">Загрузка</span>
+                </button>
+
+                {/* Мойка */}
+                <button
+                  className={'rs-pill rs-pill-toggle' + (carwashSel ? ' rs-pill-active' : '')}
+                  onClick={() => {
+                    if (carwashSel) {
+                      onToggleRate(currentRates.filter(r => r.type !== 'carwash'));
+                    } else {
+                      onToggleRate([...currentRates, { type: 'carwash' }]);
+                    }
+                  }}
+                >
+                  <span className="rs-pill-label">Мойка</span>
+                </button>
+
+                {/* Поручения */}
+                <div className={'rs-pill' + (errandsSel ? ' rs-pill-active' : '')}>
+                  <span className="rs-pill-label">Поручения</span>
+                  <input
+                    type="number" min="0" placeholder="0"
+                    value={errandsSel ? (getErrandsAmount() || '') : ''}
+                    onChange={e => {
+                      const val = e.target.value === '' ? 0 : Number(e.target.value);
+                      if (!errandsSel) {
+                        onToggleRate([...currentRates, { type: 'errands', errandsAmount: val }]);
+                      } else {
+                        onToggleRate(currentRates.map(r => r.type === 'errands' ? { ...r, errandsAmount: val } : r));
+                      }
+                    }}
+                    onFocus={() => {
+                      if (!errandsSel) {
+                        onToggleRate([...currentRates, { type: 'errands', errandsAmount: 0 }]);
+                      }
+                    }}
+                    className="rs-pill-input"
+                  />
+                </div>
               </div>
             </div>
           )}

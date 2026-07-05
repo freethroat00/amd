@@ -12,12 +12,11 @@ interface SalaryCalculatorProps {
   onUpdateRates: (date: string, rates: WorkRate[]) => void;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
   onGoToToday: () => void;
-  onUpdateDay: (date: string, updates: Partial<{ hasLoading: boolean }>) => void;
 }
 
 export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   monthData, currentYear, currentMonth,
-  onUpdateRates, onNavigateMonth, onGoToToday, onUpdateDay
+  onUpdateRates, onNavigateMonth, onGoToToday
 }) => {
   const [showRateSelector, setShowRateSelector] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
@@ -79,9 +78,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
       {showRateSelector && selectedDay && (
         <RateSelector
           currentRates={selectedDay.rates}
-          hasLoading={selectedDay.hasLoading || false}
           onToggleRate={(rates) => onUpdateRates(selectedDate, rates)}
-          onToggleLoading={(v) => onUpdateDay(selectedDate, { hasLoading: v })}
           onClose={() => setShowRateSelector(false)}
         />
       )}

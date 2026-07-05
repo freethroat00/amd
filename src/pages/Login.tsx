@@ -17,7 +17,7 @@ export const Login: React.FC<LoginProps> = ({ onAnonymousSignIn }) => {
     setLoading(true);
     const result = await onAnonymousSignIn(name.trim());
     if (result.error) {
-      setError(result.error.message);
+      setError(result.error?.message || 'Ошибка авторизации');
     }
     setLoading(false);
   };

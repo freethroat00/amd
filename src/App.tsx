@@ -34,16 +34,6 @@ function App() {
     }
   }, [monthData, saveMonth]);
 
-  const updateDay = useCallback((date: string, updates: Partial<{ hasLoading: boolean }>) => {
-    const updated = { ...monthData };
-    const dayIndex = updated.days.findIndex(d => d.date === date);
-    if (dayIndex !== -1) {
-      updated.days = [...updated.days];
-      updated.days[dayIndex] = { ...updated.days[dayIndex], ...updates };
-      saveMonth(updated.year, updated.month, updated.days);
-    }
-  }, [monthData, saveMonth]);
-
   const navigateMonth = (direction: 'prev' | 'next') => {
     setCurrentDate(prev => {
       const d = new Date(prev);
@@ -89,7 +79,6 @@ function App() {
           currentYear={currentYear}
           currentMonth={currentMonth}
           onUpdateRates={updateRates}
-          onUpdateDay={updateDay}
           onNavigateMonth={navigateMonth}
           onGoToToday={goToToday}
         />

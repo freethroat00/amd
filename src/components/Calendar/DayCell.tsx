@@ -14,7 +14,6 @@ interface DayCellProps {
 export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToday, isWeekend, isSunday, isRegionDay }) => {
   const dayNumber = new Date(workDay.date).getDate();
   const hasRates = workDay.rates.length > 0;
-  const hasLoading = workDay.hasLoading;
   const primaryType = hasRates ? workDay.rates[0].type : null;
 
   let cls = 'cal-day';
@@ -41,7 +40,6 @@ export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToda
       <div className="cal-day-num" style={isToday && primaryType ? { color: '#fff', fontWeight: 800 } : primaryType && !isToday ? { color: RATE_COLORS[primaryType as RateType] } : isRegionDay && !isToday && !hasRates && !isWeekend ? { color: 'var(--region)' } : undefined}>
         {dayNumber}
       </div>
-      {hasLoading && <div className="cal-loading-dot" />}
       {isToday && !hasRates && <div className="cal-today-dot" />}
     </div>
   );

@@ -4,19 +4,28 @@ import { DEFAULT_RATE_CONFIG } from '../types';
 export const RATE_LABELS: Record<RateType, string> = {
   pzv: 'Минск',
   kbt: 'КБТ',
-  region: 'Регион'
+  region: 'Регион',
+  loading: 'Загрузка',
+  carwash: 'Мойка',
+  errands: 'Поручения'
 };
 
 export const RATE_COLORS: Record<RateType, string> = {
   pzv: '#34c759',
   kbt: '#007aff',
-  region: '#ff9500'
+  region: '#ff9500',
+  loading: '#af52de',
+  carwash: '#af52de',
+  errands: '#af52de'
 };
 
 export const RATE_BG: Record<RateType, string> = {
   pzv: 'rgba(52,199,89,0.1)',
   kbt: 'rgba(0,122,255,0.1)',
-  region: 'rgba(255,149,0,0.1)'
+  region: 'rgba(255,149,0,0.1)',
+  loading: 'rgba(175,82,222,0.1)',
+  carwash: 'rgba(175,82,222,0.1)',
+  errands: 'rgba(175,82,222,0.1)'
 };
 
 export const calculateRateSalary = (rate: WorkRate, config: RateConfig = DEFAULT_RATE_CONFIG): number => {
@@ -30,14 +39,15 @@ export const calculateRateSalary = (rate: WorkRate, config: RateConfig = DEFAULT
       const tripPay = rate.regionDetails.hasBusinessTrip ? config.businessTrip : 0;
       const tips = rate.regionDetails.tips || 0;
       return (orderPay + tripPay + tips) * m;
+    case 'loading': return config.loadingBonus * m;
+    case 'carwash': return config.loadingBonus;
+    case 'errands': return rate.errandsAmount || 0;
     default: return 0;
   }
 };
 
 export const calculateDaySalary = (day: WorkDay, config: RateConfig = DEFAULT_RATE_CONFIG): number => {
-  const ratesSum = day.rates.reduce((total, rate) => total + calculateRateSalary(rate, config), 0);
-  const loading = day.hasLoading ? config.loadingBonus : 0;
-  return ratesSum + loading;
+  return day.rates.reduce((total, rate) => total + calculateRateSalary(rate, config), 0);
 };
 
 export const calculateMonthSalary = (monthData: MonthData, config: RateConfig = DEFAULT_RATE_CONFIG): number => {
@@ -45,7 +55,7 @@ export const calculateMonthSalary = (monthData: MonthData, config: RateConfig = 
 };
 
 export const calculateRateStats = (monthData: MonthData, config: RateConfig = DEFAULT_RATE_CONFIG) => {
-  const stats: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0 };
+  const stats: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
   monthData.days.forEach(day => {
     day.rates.forEach(rate => { stats[rate.type] += calculateRateSalary(rate, config); });
   });
@@ -80,7 +90,7 @@ export const createDefaultMonthData = (year: number, month: number): MonthData =
     const rates: WorkRate[] = isRegionDay
       ? [{ type: 'region', regionDetails: { orderCount: 0, hasBusinessTrip: false, tips: 0 } }]
       : [];
-    days.push({ date: formatDate(date), rates, hasLoading: false });
+    days.push({ date: formatDate(date), rates });
   }
   return { year, month, days };
 };

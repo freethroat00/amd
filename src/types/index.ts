@@ -1,4 +1,4 @@
-export type RateType = 'pzv' | 'kbt' | 'region';
+export type RateType = 'pzv' | 'kbt' | 'region' | 'loading' | 'carwash' | 'errands';
 
 export interface RegionDetails {
   orderCount: number;
@@ -10,6 +10,7 @@ export interface WorkRate {
   type: RateType;
   multiplier?: number;
   regionDetails?: RegionDetails;
+  errandsAmount?: number;
 }
 
 export interface WorkDay {

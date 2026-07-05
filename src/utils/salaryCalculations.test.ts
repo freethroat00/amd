@@ -15,7 +15,7 @@ describe('Salary Calculations', () => {
   test('calculateRateSalary for region without trip', () => {
     const rate: WorkRate = {
       type: 'region',
-      regionDetails: { orderCount: 5, hasBusinessTrip: false }
+      regionDetails: { orderCount: 5, hasBusinessTrip: false, tips: 0 }
     };
     expect(calculateRateSalary(rate)).toBe(35);
   });
@@ -23,7 +23,7 @@ describe('Salary Calculations', () => {
   test('calculateRateSalary for region with trip', () => {
     const rate: WorkRate = {
       type: 'region',
-      regionDetails: { orderCount: 5, hasBusinessTrip: true }
+      regionDetails: { orderCount: 5, hasBusinessTrip: true, tips: 0 }
     };
     expect(calculateRateSalary(rate)).toBe(85);
   });
@@ -55,7 +55,7 @@ describe('Salary Calculations', () => {
         { date: '2024-01-01', rates: [{ type: 'pzv' }] },
         { date: '2024-01-02', rates: [{ type: 'kbt' }] },
         { date: '2024-01-03', rates: [] },
-        { date: '2024-01-04', rates: [{ type: 'region', regionDetails: { orderCount: 10, hasBusinessTrip: true } }] }
+        { date: '2024-01-04', rates: [{ type: 'region', regionDetails: { orderCount: 10, hasBusinessTrip: true, tips: 0 } }] }
       ]
     };
     expect(calculateMonthSalary(monthData)).toBe(320);
@@ -69,7 +69,7 @@ describe('Salary Calculations', () => {
         { date: '2024-01-01', rates: [{ type: 'pzv' }] },
         { date: '2024-01-02', rates: [{ type: 'kbt' }] },
         { date: '2024-01-03', rates: [] },
-        { date: '2024-01-04', rates: [{ type: 'region', regionDetails: { orderCount: 10, hasBusinessTrip: true } }] }
+        { date: '2024-01-04', rates: [{ type: 'region', regionDetails: { orderCount: 10, hasBusinessTrip: true, tips: 0 } }] }
       ]
     };
 
