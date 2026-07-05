@@ -7,7 +7,7 @@
   cursor: pointer;
   transition: all 0.12s ease;
   background: transparent;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   border-radius: 14px;
   position: relative;
 }

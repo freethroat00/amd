@@ -223,7 +223,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
 
                 {/* Поручения */}
                 <div
-                  className={'rs-pill rs-pill-toggle' + (errandsSel ? ' rs-pill-active' : '')}
+                  className="rs-pill"
                   onClick={() => {
                     if (errandsSel && getErrandsAmount() === 0) {
                       onToggleRate(currentRates.filter(r => r.type !== 'errands'));
