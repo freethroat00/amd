@@ -8,10 +8,6 @@
   font-weight: 600; color: var(--text); outline: none; font-family: var(--font);
 }
 .notes-input::placeholder { color: var(--text-dim); opacity: 0.5; }
-.notes-empty {
-  background: var(--bg-panel); border: none; border-radius: 999px;
-  padding: 20px; text-align: center; color: var(--text-dim); font-size: 0.8rem; font-weight: 600;
-}
 .notes-list { display: flex; flex-direction: column; gap: 6px; }
 .notes-card {
   background: var(--bg-cell); border: none; border-radius: 999px;

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import type { Note } from '../../types';
 import './Notes.css';
 
@@ -10,7 +10,6 @@ interface NotesProps {
 
 export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
   const [input, setInput] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = () => {
     if (input.trim()) {
@@ -31,7 +30,6 @@ export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
 
       <div className="notes-input-wrap">
         <input
-          ref={inputRef}
           className="notes-input"
           placeholder="написать заметку..."
           value={input}
@@ -39,12 +37,6 @@ export const Notes: React.FC<NotesProps> = ({ notes, onAdd, onRemove }) => {
           onKeyDown={handleKeyDown}
         />
       </div>
-
-      {notes.length === 0 && !input && (
-        <div className="notes-empty">
-          нажмите и напишите заметку
-        </div>
-      )}
 
       <div className="notes-list">
         {notes.map(note => (

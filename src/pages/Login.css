@@ -42,7 +42,7 @@
 }
 .login-input {
   width: 100%;
-  background: #fff;
+  background: var(--bg-cell);
   border: 1.5px solid var(--border-strong);
   border-radius: 999px;
   padding: 12px 16px;
