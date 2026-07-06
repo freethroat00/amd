@@ -57,9 +57,14 @@
 .rs-x05:active { transform: scale(0.92); }
 .rs-x05-active {
   border-color: #fff;
-  background: rgba(255,255,255,0.25);
-  color: #fff;
+  background: #fff;
 }
+
+/* x0.5 contrasting fill per card color */
+.rs-card[data-color="#34c759"] .rs-x05-active { color: #34c759; }
+.rs-card[data-color="#ff9500"] .rs-x05-active { color: #ff9500; }
+.rs-card[data-color="#007aff"] .rs-x05-active { color: #007aff; }
+.rs-card[data-color="#af52de"] .rs-x05-active { color: #af52de; }
 
 /* Rate cards - белые, заливаются при .rs-active */
 .rs-card {
