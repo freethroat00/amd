@@ -21,6 +21,7 @@ export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToda
   else if (isToday) cls += ' cal-today-empty';
   else if (isSunday && !hasRates) cls += ' cal-dayoff';
   else if (isWeekend && !hasRates) cls += ' cal-we';
+  else if (!hasRates) cls += ' cal-day-empty';
 
   const cellStyle: React.CSSProperties = {};
   if (isToday && primaryType) {

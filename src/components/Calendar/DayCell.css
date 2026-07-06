@@ -21,5 +21,6 @@
 .cal-we { background: transparent; }
 .cal-we .cal-day-num { color: var(--text-dim); opacity: 0.5; }
 .cal-dayoff { background: transparent; opacity: 0.3; }
+.cal-day-empty .cal-day-num { color: var(--text-dim); }
 .cal-day-num { font-size: 0.85rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
 .cal-loading-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--load); margin-top: 2px; }
