@@ -59,9 +59,11 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
     return Math.round(Math.max(0, totalKm - 700) * 0.1 * 10) / 10;
   }, [monthData]);
 
-  const targetSalary = stats.totalSalary
-    - (businessTripSubtracted ? businessTripTotal : 0)
-    - (mileageSubtracted ? mileageTotal : 0);
+  const baseSalary = stats.totalSalary - businessTripTotal - mileageTotal;
+
+  const targetSalary = baseSalary
+    + (businessTripSubtracted ? businessTripTotal : 0)
+    + (mileageSubtracted ? mileageTotal : 0);
 
   useEffect(() => {
     const target = targetSalary;
@@ -76,7 +78,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 0.5 * (1 - Math.cos(Math.PI * progress));
-      setDisplayValue(Math.round(start + diff * eased));
+      setDisplayValue(Math.round((start + diff * eased) * 10) / 10);
       if (progress < 1) {
         animRef.current = requestAnimationFrame(animate);
       }
