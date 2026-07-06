@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Profile } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { calculateMonthStats, RATE_LABELS, RATE_COLORS } from '../utils/salaryCalculations';
+import { Calendar } from '../components/Calendar/Calendar';
 import type { MonthData, RateType } from '../types';
 import './Dashboard.css';
 
@@ -11,6 +12,7 @@ interface DashboardProps {
 }
 
 interface UserStats {
+  id: string;
   name: string;
   email: string;
   totalSalary: number;
@@ -42,6 +44,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
   const [totalNotes, setTotalNotes] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const [selectedUser, setSelectedUser] = useState<UserStats | null>(null);
+  const [userMonths, setUserMonths] = useState<MonthData[]>([]);
+  const [userCalendarDate, setUserCalendarDate] = useState(new Date());
+  const [loadingUserCalendar, setLoadingUserCalendar] = useState(false);
+
   useEffect(() => {
     loadDashboard();
   }, []);
@@ -59,12 +66,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
 
     if (profiles && monthsData) {
       const stats: UserStats[] = profiles.map(p => {
-        const userMonths = monthsData.filter(m => m.user_id === p.id);
+        const userMonthsData = monthsData.filter(m => m.user_id === p.id);
         let totalSalary = 0;
         let totalWorkDays = 0;
         const rateBreakdown: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
 
-        userMonths.forEach(m => {
+        userMonthsData.forEach(m => {
           const monthData: MonthData = { year: m.year, month: m.month, days: m.data };
           const s = calculateMonthStats(monthData);
           totalSalary += s.totalSalary;
@@ -78,11 +85,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
         });
 
         return {
+          id: p.id,
           name: p.name || p.email.split('@')[0],
           email: p.email,
           totalSalary,
           workDays: totalWorkDays,
-          months: userMonths.length,
+          months: userMonthsData.length,
           rateBreakdown
         };
       });
@@ -98,11 +106,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
         trendMap.set(key, { salary: existing.salary + s.totalSalary, days: existing.days + s.workDays });
       });
 
-      const MONTH_NAMES = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+      const MN = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
       const trend: MonthTrend[] = [];
       trendMap.forEach((val, key) => {
         const [y, m] = key.split('-').map(Number);
-        trend.push({ label: MONTH_NAMES[m] + ' ' + String(y).slice(2), salary: val.salary, days: val.days });
+        trend.push({ label: MN[m] + ' ' + String(y).slice(2), salary: val.salary, days: val.days });
       });
       setMonthTrend(trend.sort((a, b) => a.label.localeCompare(b.label)).slice(-6));
     }
@@ -124,6 +132,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
 
     setLoading(false);
   };
+
+  const loadUserCalendar = async (user: UserStats) => {
+    setSelectedUser(user);
+    setLoadingUserCalendar(true);
+    setUserCalendarDate(new Date());
+
+    const { data } = await supabase.from('months').select('*').eq('user_id', user.id);
+    if (data) {
+      setUserMonths(data.map(m => ({ year: m.year, month: m.month, days: m.data })));
+    }
+    setLoadingUserCalendar(false);
+  };
+
+  const userMonthData = (() => {
+    if (!selectedUser) return null;
+    const y = userCalendarDate.getFullYear();
+    const m = userCalendarDate.getMonth();
+    return userMonths.find(md => md.year === y && md.month === m) || { year: y, month: m, days: [] };
+  })();
+
+  const userMonthStats = userMonthData ? calculateMonthStats(userMonthData) : null;
 
   const grandTotal = users.reduce((sum, u) => sum + u.totalSalary, 0);
   const grandDays = users.reduce((sum, u) => sum + u.workDays, 0);
@@ -152,6 +181,61 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
   const topRateTypes = (Object.entries(globalBreakdown) as [RateType, number][])
     .filter(([, count]) => count > 0)
     .sort((a, b) => b[1] - a[1]);
+
+  if (selectedUser && userMonthData) {
+    return (
+      <div className="dashboard">
+        <div className="dash-header">
+          <button className="dash-back" onClick={() => setSelectedUser(null)}>{'< назад'}</button>
+          <div className="dash-title">{selectedUser.name}</div>
+          <div className="dash-role">{selectedUser.totalSalary.toFixed(0)} BYN</div>
+        </div>
+
+        <div className="dash-user-summary">
+          <span>{selectedUser.workDays} дней</span>
+          <span>·</span>
+          <span>{selectedUser.months} мес.</span>
+        </div>
+
+        {loadingUserCalendar ? (
+          <div className="dash-loading">загрузка...</div>
+        ) : (
+          <>
+            <Calendar
+              monthData={userMonthData}
+              currentYear={userCalendarDate.getFullYear()}
+              currentMonth={userCalendarDate.getMonth()}
+              onSelectRates={() => {}}
+              onNavigateMonth={(dir) => {
+                setUserCalendarDate(prev => {
+                  const d = new Date(prev);
+                  d.setMonth(d.getMonth() + (dir === 'next' ? 1 : -1));
+                  return d;
+                });
+              }}
+            />
+
+            {userMonthStats && (
+              <div className="dash-month-stats">
+                <div className="dash-stat-card">
+                  <div className="dash-stat-val">{userMonthStats.totalSalary}</div>
+                  <div className="dash-stat-label">BYN</div>
+                </div>
+                <div className="dash-stat-card">
+                  <div className="dash-stat-val">{userMonthStats.workDays}</div>
+                  <div className="dash-stat-label">дней</div>
+                </div>
+                <div className="dash-stat-card">
+                  <div className="dash-stat-val">{userMonthStats.averagePerDay.toFixed(0)}</div>
+                  <div className="dash-stat-label">BYN/день</div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">
@@ -230,10 +314,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
             </>
           )}
 
-          <div className="dash-section-title">пользователи</div>
+          <div className="dash-section-title">пользователи — нажми чтобы посмотреть календарь</div>
           <div className="dash-users">
             {users.map((u, i) => (
-              <div key={u.email} className="dash-user-card">
+              <div key={u.email} className="dash-user-card" onClick={() => loadUserCalendar(u)}>
                 <div className="dash-user-rank">#{i + 1}</div>
                 <div className="dash-user-info">
                   <div className="dash-user-name">{u.name}</div>

@@ -261,3 +261,25 @@
   padding: 20px;
   font-size: 0.8rem;
 }
+
+/* User calendar view */
+.dash-user-summary {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.dash-month-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.dash-user-card {
+  cursor: pointer;
+}
+.dash-user-card:active {
+  transform: scale(0.98);
+}
