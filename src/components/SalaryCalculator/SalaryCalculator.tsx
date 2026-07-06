@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import type { MonthData, WorkRate } from '../../types';
 import { Calendar } from '../Calendar/Calendar';
 import { RateSelector } from '../RateSelector/RateSelector';
+import { MonthSummary } from '../MonthSummary/MonthSummary';
 import { calculateMonthStats } from '../../utils/salaryCalculations';
 import { DEFAULT_RATE_CONFIG } from '../../types';
 import './SalaryCalculator.css';
@@ -13,11 +14,12 @@ interface SalaryCalculatorProps {
   onUpdateRates: (date: string, rates: WorkRate[]) => void;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
   businessTripSubtracted: boolean;
+  onToggleBusinessTrip: () => void;
 }
 
 export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   monthData, currentYear, currentMonth,
-  onUpdateRates, onNavigateMonth, businessTripSubtracted
+  onUpdateRates, onNavigateMonth, businessTripSubtracted, onToggleBusinessTrip
 }) => {
   const [showRateSelector, setShowRateSelector] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
@@ -80,6 +82,12 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
         </div>
         <div className="sc-total-days">{stats.workDays} рабочих дней</div>
       </div>
+
+      <MonthSummary
+        monthData={monthData}
+        businessTripSubtracted={businessTripSubtracted}
+        onToggleBusinessTrip={onToggleBusinessTrip}
+      />
 
       <Calendar
         monthData={monthData}

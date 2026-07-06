@@ -43,7 +43,7 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
         onClick={onToggleBusinessTrip}
       >
         <span className="ms-pill-label">Командиры</span>
-        <span className="ms-pill-val">{businessTripTotal > 0 ? businessTripTotal + ' ₽' : '—'}</span>
+        <span className="ms-pill-val">{businessTripTotal > 0 ? businessTripTotal : '—'}</span>
       </button>
     </div>
   );
