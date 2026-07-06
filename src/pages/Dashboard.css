@@ -38,7 +38,7 @@
 .dash-stats-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 .dash-stat-card {
   flex: 1;
@@ -50,12 +50,12 @@
   text-align: center;
 }
 .dash-stat-val {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: var(--text);
 }
 .dash-stat-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
   color: var(--text-dim);
   margin-top: 2px;
@@ -67,6 +67,7 @@
   color: var(--text-dim);
   text-transform: lowercase;
   margin-bottom: 10px;
+  margin-top: 12px;
 }
 
 .dash-loading {
@@ -76,47 +77,138 @@
   font-weight: 600;
 }
 
+/* Breakdown */
+.dash-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.dash-breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-cell);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.dash-breakdown-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dash-breakdown-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.dash-breakdown-count {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* Trend chart */
+.dash-trend {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  height: 120px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+.dash-trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.dash-trend-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.dash-trend-bar {
+  width: 100%;
+  max-width: 32px;
+  background: var(--accent);
+  border-radius: 6px 6px 2px 2px;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+.dash-trend-val {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 4px;
+}
+.dash-trend-label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+/* Users */
 .dash-users {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 24px;
 }
 .dash-user-card {
   background: var(--bg-cell);
-  border-radius: 999px;
-  padding: 14px 16px;
+  border-radius: 16px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 .dash-user-rank {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 800;
   color: var(--text-dim);
-  min-width: 28px;
+  min-width: 24px;
 }
 .dash-user-info {
   flex: 1;
   min-width: 0;
 }
 .dash-user-name {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text);
   text-transform: capitalize;
 }
-.dash-user-days {
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: var(--text-dim);
+.dash-user-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.dash-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.dash-user-stats {
+  text-align: right;
 }
 .dash-user-salary {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--accent);
 }
+.dash-user-days {
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
 
+/* Events */
 .dash-events {
   display: flex;
   flex-direction: column;

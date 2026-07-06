@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { Profile } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { calculateMonthStats } from '../utils/salaryCalculations';
-import type { MonthData } from '../types';
+import { calculateMonthStats, RATE_LABELS, RATE_COLORS } from '../utils/salaryCalculations';
+import type { MonthData, RateType } from '../types';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -16,6 +16,13 @@ interface UserStats {
   totalSalary: number;
   workDays: number;
   months: number;
+  rateBreakdown: Record<RateType, number>;
+}
+
+interface MonthTrend {
+  label: string;
+  salary: number;
+  days: number;
 }
 
 interface AnalyticsEvent {
@@ -31,6 +38,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
   const [users, setUsers] = useState<UserStats[]>([]);
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [activeUsers, setActiveUsers] = useState(0);
+  const [monthTrend, setMonthTrend] = useState<MonthTrend[]>([]);
+  const [totalNotes, setTotalNotes] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,10 +47,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
   }, []);
 
   const loadDashboard = async () => {
-    const [profilesRes, monthsRes, analyticsRes] = await Promise.all([
+    const [profilesRes, monthsRes, analyticsRes, notesRes] = await Promise.all([
       supabase.from('profiles').select('*'),
       supabase.from('months').select('*'),
-      supabase.from('analytics').select('*, profiles(name)').order('created_at', { ascending: false }).limit(30)
+      supabase.from('analytics').select('*, profiles(name)').order('created_at', { ascending: false }).limit(50),
+      supabase.from('notes').select('id')
     ]);
 
     const profiles = profilesRes.data;
@@ -52,12 +62,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
         const userMonths = monthsData.filter(m => m.user_id === p.id);
         let totalSalary = 0;
         let totalWorkDays = 0;
+        const rateBreakdown: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
 
         userMonths.forEach(m => {
           const monthData: MonthData = { year: m.year, month: m.month, days: m.data };
           const s = calculateMonthStats(monthData);
           totalSalary += s.totalSalary;
           totalWorkDays += s.workDays;
+
+          m.data.forEach((day: any) => {
+            day.rates?.forEach((rate: any) => {
+              rateBreakdown[rate.type as RateType] = (rateBreakdown[rate.type as RateType] || 0) + 1;
+            });
+          });
         });
 
         return {
@@ -65,16 +82,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
           email: p.email,
           totalSalary,
           workDays: totalWorkDays,
-          months: userMonths.length
+          months: userMonths.length,
+          rateBreakdown
         };
       });
 
       setUsers(stats.sort((a, b) => b.totalSalary - a.totalSalary));
+
+      const trendMap = new Map<string, { salary: number; days: number }>();
+      monthsData.forEach(m => {
+        const monthData: MonthData = { year: m.year, month: m.month, days: m.data };
+        const s = calculateMonthStats(monthData);
+        const key = `${m.year}-${m.month}`;
+        const existing = trendMap.get(key) || { salary: 0, days: 0 };
+        trendMap.set(key, { salary: existing.salary + s.totalSalary, days: existing.days + s.workDays });
+      });
+
+      const MONTH_NAMES = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+      const trend: MonthTrend[] = [];
+      trendMap.forEach((val, key) => {
+        const [y, m] = key.split('-').map(Number);
+        trend.push({ label: MONTH_NAMES[m] + ' ' + String(y).slice(2), salary: val.salary, days: val.days });
+      });
+      setMonthTrend(trend.sort((a, b) => a.label.localeCompare(b.label)).slice(-6));
     }
 
     if (analyticsRes.data) {
       setEvents(analyticsRes.data);
-
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const active = new Set(
         analyticsRes.data
@@ -84,10 +118,25 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
       setActiveUsers(active.size);
     }
 
+    if (notesRes.data) {
+      setTotalNotes(notesRes.data.length);
+    }
+
     setLoading(false);
   };
 
   const grandTotal = users.reduce((sum, u) => sum + u.totalSalary, 0);
+  const grandDays = users.reduce((sum, u) => sum + u.workDays, 0);
+  const avgPerDay = grandDays > 0 ? grandTotal / grandDays : 0;
+
+  const globalBreakdown: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
+  users.forEach(u => {
+    Object.entries(u.rateBreakdown).forEach(([type, count]) => {
+      globalBreakdown[type as RateType] += count;
+    });
+  });
+
+  const maxTrend = Math.max(...monthTrend.map(t => t.salary), 1);
 
   const formatTime = (iso: string) => {
     const d = new Date(iso);
@@ -99,6 +148,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
     sign_in: 'Вход',
     rate_change: 'Смена'
   };
+
+  const topRateTypes = (Object.entries(globalBreakdown) as [RateType, number][])
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => b[1] - a[1]);
 
   return (
     <div className="dashboard">
@@ -114,12 +167,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
           <div className="dash-stat-label">BYN всего</div>
         </div>
         <div className="dash-stat-card">
+          <div className="dash-stat-val">{grandDays}</div>
+          <div className="dash-stat-label">дней</div>
+        </div>
+        <div className="dash-stat-card">
+          <div className="dash-stat-val">{avgPerDay.toFixed(0)}</div>
+          <div className="dash-stat-label">BYN/день</div>
+        </div>
+      </div>
+
+      <div className="dash-stats-row">
+        <div className="dash-stat-card">
           <div className="dash-stat-val">{users.length}</div>
-          <div className="dash-stat-label">пользователей</div>
+          <div className="dash-stat-label">юзеров</div>
         </div>
         <div className="dash-stat-card">
           <div className="dash-stat-val">{activeUsers}</div>
           <div className="dash-stat-label">активных (7д)</div>
+        </div>
+        <div className="dash-stat-card">
+          <div className="dash-stat-val">{totalNotes}</div>
+          <div className="dash-stat-label">заметок</div>
         </div>
       </div>
 
@@ -127,6 +195,41 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
         <div className="dash-loading">загрузка...</div>
       ) : (
         <>
+          {topRateTypes.length > 0 && (
+            <>
+              <div className="dash-section-title">смены по типам</div>
+              <div className="dash-breakdown">
+                {topRateTypes.map(([type, count]) => (
+                  <div key={type} className="dash-breakdown-item">
+                    <div className="dash-breakdown-dot" style={{ background: RATE_COLORS[type] }} />
+                    <span className="dash-breakdown-name">{RATE_LABELS[type]}</span>
+                    <span className="dash-breakdown-count">{count}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {monthTrend.length > 1 && (
+            <>
+              <div className="dash-section-title">по месяцам</div>
+              <div className="dash-trend">
+                {monthTrend.map(t => (
+                  <div key={t.label} className="dash-trend-col">
+                    <div className="dash-trend-bar-wrap">
+                      <div
+                        className="dash-trend-bar"
+                        style={{ height: `${(t.salary / maxTrend) * 100}%` }}
+                      />
+                    </div>
+                    <div className="dash-trend-val">{t.salary.toFixed(0)}</div>
+                    <div className="dash-trend-label">{t.label}</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
           <div className="dash-section-title">пользователи</div>
           <div className="dash-users">
             {users.map((u, i) => (
@@ -134,9 +237,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
                 <div className="dash-user-rank">#{i + 1}</div>
                 <div className="dash-user-info">
                   <div className="dash-user-name">{u.name}</div>
-                  <div className="dash-user-days">{u.workDays} дней · {u.months} мес.</div>
+                  <div className="dash-user-tags">
+                    {u.rateBreakdown.pzv > 0 && <span className="dash-tag" style={{ background: RATE_COLORS.pzv + '22', color: RATE_COLORS.pzv }}>Минск {u.rateBreakdown.pzv}</span>}
+                    {u.rateBreakdown.kbt > 0 && <span className="dash-tag" style={{ background: RATE_COLORS.kbt + '22', color: RATE_COLORS.kbt }}>КБТ {u.rateBreakdown.kbt}</span>}
+                    {u.rateBreakdown.region > 0 && <span className="dash-tag" style={{ background: RATE_COLORS.region + '22', color: RATE_COLORS.region }}>Рег {u.rateBreakdown.region}</span>}
+                  </div>
                 </div>
-                <div className="dash-user-salary">{u.totalSalary.toFixed(0)} BYN</div>
+                <div className="dash-user-stats">
+                  <div className="dash-user-salary">{u.totalSalary.toFixed(0)} BYN</div>
+                  <div className="dash-user-days">{u.workDays}д · {u.months}м</div>
+                </div>
               </div>
             ))}
           </div>
