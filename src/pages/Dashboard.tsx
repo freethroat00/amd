@@ -126,6 +126,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
               currentYear={userCalendarDate.getFullYear()}
               currentMonth={userCalendarDate.getMonth()}
               onSelectRates={() => {}}
+              showDetails
               onNavigateMonth={(dir) => {
                 setUserCalendarDate(prev => {
                   const d = new Date(prev);

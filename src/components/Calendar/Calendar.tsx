@@ -9,6 +9,7 @@ interface CalendarProps {
   currentMonth: number;
   onSelectRates: (date: string) => void;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
+  showDetails?: boolean;
 }
 
 const MONTH_NAMES = [
@@ -19,7 +20,7 @@ const WEEK_DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 export const Calendar: React.FC<CalendarProps> = ({
   monthData, currentYear, currentMonth,
-  onSelectRates, onNavigateMonth
+  onSelectRates, onNavigateMonth, showDetails
 }) => {
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const today = new Date();
@@ -45,7 +46,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       const isWeekend = dow === 0 || dow === 6;
       if (workDay) {
         days.push(
-          <DayCell key={day} workDay={workDay} onSelectRates={onSelectRates} isToday={dateStr === todayString} isWeekend={isWeekend} isSunday={isSunday} isRegionDay={isRegionDay} />
+          <DayCell key={day} workDay={workDay} onSelectRates={onSelectRates} isToday={dateStr === todayString} isWeekend={isWeekend} isSunday={isSunday} isRegionDay={isRegionDay} showDetails={showDetails} />
         );
       }
     }
