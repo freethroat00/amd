@@ -1,0 +1,46 @@
+.ms {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ms-pill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 6px;
+  cursor: default;
+  transition: all 0.15s ease;
+}
+.ms-pill-btn {
+  cursor: pointer;
+}
+.ms-pill-btn:active {
+  transform: scale(0.95);
+}
+.ms-pill-active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ms-pill-active .ms-pill-label {
+  color: rgba(255,255,255,0.8);
+}
+.ms-pill-active .ms-pill-val {
+  color: #fff;
+}
+.ms-pill-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: capitalize;
+}
+.ms-pill-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}

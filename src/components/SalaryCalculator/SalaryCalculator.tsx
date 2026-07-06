@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import type { MonthData, WorkRate } from '../../types';
 import { Calendar } from '../Calendar/Calendar';
 import { RateSelector } from '../RateSelector/RateSelector';
 import { calculateMonthStats } from '../../utils/salaryCalculations';
+import { DEFAULT_RATE_CONFIG } from '../../types';
 import './SalaryCalculator.css';
 
 interface SalaryCalculatorProps {
@@ -11,11 +12,12 @@ interface SalaryCalculatorProps {
   currentMonth: number;
   onUpdateRates: (date: string, rates: WorkRate[]) => void;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
+  businessTripSubtracted: boolean;
 }
 
 export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   monthData, currentYear, currentMonth,
-  onUpdateRates, onNavigateMonth
+  onUpdateRates, onNavigateMonth, businessTripSubtracted
 }) => {
   const [showRateSelector, setShowRateSelector] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
@@ -30,8 +32,22 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   const selectedDay = monthData.days.find(d => d.date === selectedDate);
   const stats = calculateMonthStats(monthData);
 
+  const businessTripTotal = useMemo(() => {
+    let total = 0;
+    monthData.days.forEach(day => {
+      day.rates.forEach(rate => {
+        if (rate.type === 'region' && rate.regionDetails?.hasBusinessTrip) {
+          total += DEFAULT_RATE_CONFIG.businessTrip;
+        }
+      });
+    });
+    return total;
+  }, [monthData]);
+
+  const targetSalary = businessTripSubtracted ? stats.totalSalary - businessTripTotal : stats.totalSalary;
+
   useEffect(() => {
-    const target = stats.totalSalary;
+    const target = targetSalary;
     const start = displayValue;
     const diff = target - start;
     if (diff === 0) return;
@@ -51,13 +67,13 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
 
     animRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animRef.current);
-  }, [stats.totalSalary]);
+  }, [targetSalary]);
 
   return (
     <div className="sc">
       <div className="sc-total">
         <div className="sc-total-row">
-          <div className={'sc-total-val' + (stats.totalSalary === 0 ? ' sc-zero' : ' sc-active')}>
+          <div className={'sc-total-val' + (targetSalary === 0 ? ' sc-zero' : ' sc-active')}>
             {displayValue}
           </div>
           <div className="sc-total-cur">BYN</div>

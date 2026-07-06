@@ -5,6 +5,7 @@ import { useTheme } from './hooks/useTheme';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { SalaryCalculator } from './components/SalaryCalculator/SalaryCalculator';
+import { MonthSummary } from './components/MonthSummary/MonthSummary';
 import { Notes } from './components/Notes/Notes';
 import { createDefaultMonthData } from './utils/salaryCalculations';
 import type { MonthData, WorkRate } from './types';
@@ -16,6 +17,7 @@ function App() {
   const { toggle: toggleTheme } = useTheme();
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [businessTripSubtracted, setBusinessTripSubtracted] = useState(false);
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -78,12 +80,18 @@ function App() {
             )}
           </div>
         </div>
+        <MonthSummary
+          monthData={monthData}
+          businessTripSubtracted={businessTripSubtracted}
+          onToggleBusinessTrip={() => setBusinessTripSubtracted(p => !p)}
+        />
         <SalaryCalculator
           monthData={monthData}
           currentYear={currentYear}
           currentMonth={currentMonth}
           onUpdateRates={updateRates}
           onNavigateMonth={navigateMonth}
+          businessTripSubtracted={businessTripSubtracted}
         />
         <Notes
           notes={notes}
