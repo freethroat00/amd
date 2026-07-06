@@ -13,6 +13,7 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
   let orders = 0;
   let loadingCount = 0;
   let businessTripTotal = 0;
+  let mileageKm = 0;
 
   monthData.days.forEach(day => {
     day.rates.forEach(rate => {
@@ -21,6 +22,7 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
         if (rate.regionDetails.hasBusinessTrip) {
           businessTripTotal += 50;
         }
+        mileageKm += rate.regionDetails.mileage || 0;
       }
       if (rate.type === 'loading') {
         loadingCount++;
@@ -43,8 +45,12 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
         onClick={onToggleBusinessTrip}
       >
         <span className="ms-pill-label">Командиры</span>
-        <span className="ms-pill-val">{businessTripTotal > 0 ? businessTripTotal : '—'}</span>
+        <span className="ms-pill-val">{businessTripTotal}</span>
       </button>
+      <div className="ms-pill">
+        <span className="ms-pill-label">Пробег</span>
+        <span className="ms-pill-val">{mileageKm > 0 ? mileageKm + 'км' : '—'}</span>
+      </div>
     </div>
   );
 };

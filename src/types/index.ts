@@ -4,6 +4,7 @@ export interface RegionDetails {
   orderCount: number;
   hasBusinessTrip: boolean;
   tips: number;
+  mileage: number;
 }
 
 export interface WorkRate {

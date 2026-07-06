@@ -38,7 +38,8 @@ export const calculateRateSalary = (rate: WorkRate, config: RateConfig = DEFAULT
       const orderPay = rate.regionDetails.orderCount * config.regionPerOrder;
       const tripPay = rate.regionDetails.hasBusinessTrip ? config.businessTrip : 0;
       const tips = rate.regionDetails.tips || 0;
-      return (orderPay + tripPay + tips) * m;
+      const mileagePay = Math.max(0, (rate.regionDetails.mileage || 0) - 700) * 0.1;
+      return (orderPay + tripPay + tips + mileagePay) * m;
     case 'loading': return config.loadingBonus * m;
     case 'carwash': return config.loadingBonus;
     case 'errands': return rate.errandsAmount || 0;
@@ -88,7 +89,7 @@ export const createDefaultMonthData = (year: number, month: number): MonthData =
     const dow = date.getDay();
     const isRegionDay = dow === 3 || dow === 6;
     const rates: WorkRate[] = isRegionDay
-      ? [{ type: 'region', regionDetails: { orderCount: 0, hasBusinessTrip: false, tips: 0 } }]
+      ? [{ type: 'region', regionDetails: { orderCount: 0, hasBusinessTrip: false, tips: 0, mileage: 0 } }]
       : [];
     days.push({ date: formatDate(date), rates });
   }
