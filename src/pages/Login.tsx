@@ -26,7 +26,7 @@ export const Login: React.FC<LoginProps> = ({ onAnonymousSignIn }) => {
     <div className="login">
       <div className="login-card">
         <div className="login-header">
-          <div className="login-logo">Век живи<span>,</span> век работай</div>
+          <div className="login-logo">амд<span>.</span>дай</div>
         </div>
         <form className="login-form" onSubmit={handleSubmit}>
           <input
