@@ -38,7 +38,7 @@ export const calculateRateSalary = (rate: WorkRate, config: RateConfig = DEFAULT
       const orderPay = rate.regionDetails.orderCount * config.regionPerOrder;
       const tripPay = rate.regionDetails.hasBusinessTrip ? config.businessTrip : 0;
       const tips = rate.regionDetails.tips || 0;
-      const mileagePay = Math.max(0, (rate.regionDetails.mileage || 0) - 700) * 0.1;
+      const mileagePay = Math.round(Math.max(0, (rate.regionDetails.mileage || 0) - 700) * 0.1 * 10) / 10;
       return (orderPay + tripPay + tips + mileagePay) * m;
     case 'loading': return config.loadingBonus * m;
     case 'carwash': return config.loadingBonus;

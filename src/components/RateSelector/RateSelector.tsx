@@ -74,7 +74,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
       const base = r.regionDetails.orderCount * DEFAULT_RATE_CONFIG.regionPerOrder
         + (r.regionDetails.hasBusinessTrip ? DEFAULT_RATE_CONFIG.businessTrip : 0)
         + (r.regionDetails.tips || 0)
-        + Math.max(0, (r.regionDetails.mileage || 0) - 700) * 0.1;
+        + Math.round(Math.max(0, (r.regionDetails.mileage || 0) - 700) * 0.1 * 10) / 10;
       return sum + base * m;
     }
     if (r.type === 'loading') return sum + DEFAULT_RATE_CONFIG.loadingBonus * m;
@@ -152,7 +152,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                 <div className="rs-pill">
                   <span className="rs-pill-label">Пробег</span>
                   <input
-                    type="number" min="0" placeholder="0"
+                    type="number" min="0" step="0.1" placeholder="0"
                     value={regionDetails.mileage || ''}
                     onChange={e => updateRegion({ mileage: e.target.value === '' ? 0 : Number(e.target.value) })}
                     className="rs-pill-input"

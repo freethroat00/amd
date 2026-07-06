@@ -31,6 +31,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
   const [userCalendarDate, setUserCalendarDate] = useState(new Date());
   const [loadingUserCalendar, setLoadingUserCalendar] = useState(false);
   const [userBusinessTrip, setUserBusinessTrip] = useState(false);
+  const [userMileage, setUserMileage] = useState(false);
 
   useEffect(() => {
     loadDashboard();
@@ -87,6 +88,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
     setLoadingUserCalendar(true);
     setUserCalendarDate(new Date());
     setUserBusinessTrip(false);
+    setUserMileage(false);
 
     const { data } = await supabase.from('months').select('*').eq('user_id', user.id);
     if (data) {
@@ -140,6 +142,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
               monthData={userMonthData}
               businessTripSubtracted={userBusinessTrip}
               onToggleBusinessTrip={() => setUserBusinessTrip(p => !p)}
+              mileageSubtracted={userMileage}
+              onToggleMileage={() => setUserMileage(p => !p)}
             />
           </>
         )}

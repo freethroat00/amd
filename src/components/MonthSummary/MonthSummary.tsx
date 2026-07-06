@@ -5,15 +5,17 @@ interface MonthSummaryProps {
   monthData: MonthData;
   businessTripSubtracted: boolean;
   onToggleBusinessTrip: () => void;
+  mileageSubtracted: boolean;
+  onToggleMileage: () => void;
 }
 
 export const MonthSummary: React.FC<MonthSummaryProps> = ({
-  monthData, businessTripSubtracted, onToggleBusinessTrip
+  monthData, businessTripSubtracted, onToggleBusinessTrip, mileageSubtracted, onToggleMileage
 }) => {
   let orders = 0;
   let loadingCount = 0;
   let businessTripTotal = 0;
-  let mileageKm = 0;
+  let totalMileageKm = 0;
 
   monthData.days.forEach(day => {
     day.rates.forEach(rate => {
@@ -22,13 +24,15 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
         if (rate.regionDetails.hasBusinessTrip) {
           businessTripTotal += 50;
         }
-        mileageKm += rate.regionDetails.mileage || 0;
+        totalMileageKm += rate.regionDetails.mileage || 0;
       }
       if (rate.type === 'loading') {
         loadingCount++;
       }
     });
   });
+
+  const mileagePay = Math.round(Math.max(0, totalMileageKm - 700) * 0.1 * 10) / 10;
 
   return (
     <div className="ms">
@@ -47,10 +51,13 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
         <span className="ms-pill-label">Командиры</span>
         <span className="ms-pill-val">{businessTripTotal}</span>
       </button>
-      <div className="ms-pill">
+      <button
+        className={'ms-pill ms-pill-btn' + (mileageSubtracted ? ' ms-pill-active' : '')}
+        onClick={onToggleMileage}
+      >
         <span className="ms-pill-label">Пробег</span>
-        <span className="ms-pill-val">{mileageKm > 0 ? mileageKm + 'км' : '—'}</span>
-      </div>
+        <span className="ms-pill-val">{mileagePay}</span>
+      </button>
     </div>
   );
 };

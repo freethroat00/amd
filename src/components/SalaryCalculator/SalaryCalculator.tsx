@@ -24,6 +24,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   const [showRateSelector, setShowRateSelector] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [displayValue, setDisplayValue] = useState(0);
+  const [mileageSubtracted, setMileageSubtracted] = useState(false);
   const animRef = useRef<number>(0);
 
   const handleSelectRates = (date: string) => {
@@ -46,7 +47,21 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
     return total;
   }, [monthData]);
 
-  const targetSalary = businessTripSubtracted ? stats.totalSalary - businessTripTotal : stats.totalSalary;
+  const mileageTotal = useMemo(() => {
+    let totalKm = 0;
+    monthData.days.forEach(day => {
+      day.rates.forEach(rate => {
+        if (rate.type === 'region' && rate.regionDetails) {
+          totalKm += rate.regionDetails.mileage || 0;
+        }
+      });
+    });
+    return Math.round(Math.max(0, totalKm - 700) * 0.1 * 10) / 10;
+  }, [monthData]);
+
+  const targetSalary = stats.totalSalary
+    - (businessTripSubtracted ? businessTripTotal : 0)
+    - (mileageSubtracted ? mileageTotal : 0);
 
   useEffect(() => {
     const target = targetSalary;
@@ -87,6 +102,8 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
         monthData={monthData}
         businessTripSubtracted={businessTripSubtracted}
         onToggleBusinessTrip={onToggleBusinessTrip}
+        mileageSubtracted={mileageSubtracted}
+        onToggleMileage={() => setMileageSubtracted(p => !p)}
       />
 
       <Calendar
