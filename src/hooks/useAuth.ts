@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { trackEvent } from '../utils/analytics';
 
 export interface Profile {
   id: string;
@@ -57,6 +58,7 @@ export const useAuth = () => {
         name: name,
         role: 'user'
       }, { onConflict: 'id' });
+      trackEvent('sign_in', { name }, data.user.id);
     }
     return { error: null };
   }, []);

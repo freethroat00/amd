@@ -7,6 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { SalaryCalculator } from './components/SalaryCalculator/SalaryCalculator';
 import { Notes } from './components/Notes/Notes';
 import { createDefaultMonthData } from './utils/salaryCalculations';
+import { trackEvent } from './utils/analytics';
 import type { MonthData, WorkRate } from './types';
 import './App.css';
 
@@ -34,8 +35,9 @@ function App() {
       updated.days = [...updated.days];
       updated.days[dayIndex] = { ...updated.days[dayIndex], rates };
       saveMonth(updated.year, updated.month, updated.days);
+      trackEvent('rate_change', { date, rates: rates.map(r => r.type) }, user?.id);
     }
-  }, [monthData, saveMonth]);
+  }, [monthData, saveMonth, user?.id]);
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     setCurrentDate(prev => {
