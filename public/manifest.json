@@ -1,0 +1,11 @@
+{
+  "name": "амд.дай",
+  "short_name": "амд.дай",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1c1e",
+  "theme_color": "#34c759",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
