@@ -48,22 +48,22 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   }, [monthData]);
 
   const mileageTotal = useMemo(() => {
-    let totalKm = 0;
+    let total = 0;
     monthData.days.forEach(day => {
       day.rates.forEach(rate => {
         if (rate.type === 'region' && rate.regionDetails) {
-          totalKm += rate.regionDetails.mileage || 0;
+          const km = rate.regionDetails.mileage || 0;
+          const overage = Math.max(0, km - 700);
+          total += Math.round(overage * 0.1 * 10) / 10;
         }
       });
     });
-    return Math.round(Math.max(0, totalKm - 700) * 0.1 * 10) / 10;
+    return total;
   }, [monthData]);
 
-  const baseSalary = stats.totalSalary - businessTripTotal - mileageTotal;
-
-  const targetSalary = baseSalary
-    + (businessTripSubtracted ? businessTripTotal : 0)
-    + (mileageSubtracted ? mileageTotal : 0);
+  const targetSalary = stats.totalSalary
+    - (businessTripSubtracted ? businessTripTotal : 0)
+    - (mileageSubtracted ? mileageTotal : 0);
 
   useEffect(() => {
     const target = targetSalary;

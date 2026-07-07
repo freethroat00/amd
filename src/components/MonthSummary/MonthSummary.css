@@ -31,6 +31,16 @@
 .ms-pill-active .ms-pill-val {
   color: #fff;
 }
+.ms-pill-subtracted {
+  background: #ff3b30;
+  border-color: #ff3b30;
+}
+.ms-pill-subtracted .ms-pill-label {
+  color: rgba(255,255,255,0.8);
+}
+.ms-pill-subtracted .ms-pill-val {
+  color: #fff;
+}
 .ms-pill-label {
   font-size: 0.65rem;
   font-weight: 700;
