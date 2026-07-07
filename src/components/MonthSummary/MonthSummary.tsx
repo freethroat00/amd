@@ -1,29 +1,44 @@
+import { useState } from 'react';
 import type { MonthData } from '../../types';
+import { DEFAULT_RATE_CONFIG } from '../../types';
 import './MonthSummary.css';
 
 interface MonthSummaryProps {
   monthData: MonthData;
-  businessTripSubtracted: boolean;
-  onToggleBusinessTrip: () => void;
   mileageSubtracted: boolean;
   onToggleMileage: () => void;
+  extrasSubtracted: Record<string, boolean>;
+  onToggleExtra: (key: string) => void;
 }
 
+const EXTRA_ITEMS = [
+  { key: 'komandirovki', label: 'Командиры' },
+  { key: 'chayevye', label: 'Чаевые' },
+  { key: 'moiki', label: 'Мойки' },
+  { key: 'porucheniya', label: 'Поручения' },
+] as const;
+
 export const MonthSummary: React.FC<MonthSummaryProps> = ({
-  monthData, businessTripSubtracted, onToggleBusinessTrip, mileageSubtracted, onToggleMileage
+  monthData, mileageSubtracted, onToggleMileage, extrasSubtracted, onToggleExtra
 }) => {
+  const [dopyExpanded, setDopyExpanded] = useState(false);
+
   let orders = 0;
   let loadingCount = 0;
-  let businessTripTotal = 0;
   let mileagePay = 0;
+  let komandirovki = 0;
+  let chayevye = 0;
+  let moiki = 0;
+  let porucheniya = 0;
 
   monthData.days.forEach(day => {
     day.rates.forEach(rate => {
       if (rate.type === 'region' && rate.regionDetails) {
         orders += rate.regionDetails.orderCount;
         if (rate.regionDetails.hasBusinessTrip) {
-          businessTripTotal += 50;
+          komandirovki += DEFAULT_RATE_CONFIG.businessTrip;
         }
+        chayevye += rate.regionDetails.tips || 0;
         const km = rate.regionDetails.mileage || 0;
         const overage = Math.max(0, km - 700);
         mileagePay += Math.round(overage * 0.1 * 10) / 10;
@@ -31,8 +46,23 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
       if (rate.type === 'loading') {
         loadingCount++;
       }
+      if (rate.type === 'carwash') {
+        moiki += DEFAULT_RATE_CONFIG.loadingBonus;
+      }
+      if (rate.type === 'errands') {
+        porucheniya += rate.errandsAmount || 0;
+      }
     });
   });
+
+  const extrasMap: Record<string, number> = {
+    komandirovki,
+    chayevye,
+    moiki,
+    porucheniya,
+  };
+
+  const dopyTotal = komandirovki + chayevye + moiki + porucheniya;
 
   return (
     <div className="ms">
@@ -45,19 +75,35 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
         <span className="ms-pill-val">{loadingCount}</span>
       </div>
       <button
-        className={'ms-pill ms-pill-btn' + (businessTripSubtracted ? ' ms-pill-subtracted' : '')}
-        onClick={onToggleBusinessTrip}
-      >
-        <span className="ms-pill-label">Командиры</span>
-        <span className="ms-pill-val">{businessTripTotal}</span>
-      </button>
-      <button
         className={'ms-pill ms-pill-btn' + (mileageSubtracted ? ' ms-pill-subtracted' : '')}
         onClick={onToggleMileage}
       >
         <span className="ms-pill-label">Пробег</span>
         <span className="ms-pill-val">{mileagePay}</span>
       </button>
+      <div className={'ms-pill ms-dopy' + (dopyExpanded ? ' ms-dopy-open' : '')}>
+        <button
+          className="ms-pill-btn-full"
+          onClick={() => setDopyExpanded(p => !p)}
+        >
+          <span className="ms-pill-label">Допы</span>
+          <span className="ms-pill-val">{dopyTotal}</span>
+        </button>
+        {dopyExpanded && (
+          <div className="ms-dopy-list">
+            {EXTRA_ITEMS.map(item => (
+              <button
+                key={item.key}
+                className={'ms-sub-cell' + (extrasSubtracted[item.key] ? ' ms-sub-active' : '')}
+                onClick={() => onToggleExtra(item.key)}
+              >
+                <span className="ms-sub-label">{item.label}</span>
+                <span className="ms-sub-val">{extrasMap[item.key]}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

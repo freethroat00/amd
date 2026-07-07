@@ -13,18 +13,17 @@ interface SalaryCalculatorProps {
   currentMonth: number;
   onUpdateRates: (date: string, rates: WorkRate[]) => void;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
-  businessTripSubtracted: boolean;
-  onToggleBusinessTrip: () => void;
 }
 
 export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   monthData, currentYear, currentMonth,
-  onUpdateRates, onNavigateMonth, businessTripSubtracted, onToggleBusinessTrip
+  onUpdateRates, onNavigateMonth
 }) => {
   const [showRateSelector, setShowRateSelector] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [displayValue, setDisplayValue] = useState(0);
   const [mileageSubtracted, setMileageSubtracted] = useState(false);
+  const [extrasSubtracted, setExtrasSubtracted] = useState<Record<string, boolean>>({});
   const animRef = useRef<number>(0);
 
   const handleSelectRates = (date: string) => {
@@ -35,35 +34,42 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
   const selectedDay = monthData.days.find(d => d.date === selectedDate);
   const stats = calculateMonthStats(monthData);
 
-  const businessTripTotal = useMemo(() => {
-    let total = 0;
-    monthData.days.forEach(day => {
-      day.rates.forEach(rate => {
-        if (rate.type === 'region' && rate.regionDetails?.hasBusinessTrip) {
-          total += DEFAULT_RATE_CONFIG.businessTrip;
-        }
-      });
-    });
-    return total;
-  }, [monthData]);
+  const extras = useMemo(() => {
+    let komandirovki = 0;
+    let chayevye = 0;
+    let moiki = 0;
+    let porucheniya = 0;
+    let mileageTotal = 0;
 
-  const mileageTotal = useMemo(() => {
-    let total = 0;
     monthData.days.forEach(day => {
       day.rates.forEach(rate => {
         if (rate.type === 'region' && rate.regionDetails) {
+          if (rate.regionDetails.hasBusinessTrip) {
+            komandirovki += DEFAULT_RATE_CONFIG.businessTrip;
+          }
+          chayevye += rate.regionDetails.tips || 0;
           const km = rate.regionDetails.mileage || 0;
           const overage = Math.max(0, km - 700);
-          total += Math.round(overage * 0.1 * 10) / 10;
+          mileageTotal += Math.round(overage * 0.1 * 10) / 10;
+        }
+        if (rate.type === 'carwash') {
+          moiki += DEFAULT_RATE_CONFIG.loadingBonus;
+        }
+        if (rate.type === 'errands') {
+          porucheniya += rate.errandsAmount || 0;
         }
       });
     });
-    return total;
+
+    return { komandirovki, chayevye, moiki, porucheniya, mileageTotal };
   }, [monthData]);
 
   const targetSalary = stats.totalSalary
-    - (businessTripSubtracted ? businessTripTotal : 0)
-    - (mileageSubtracted ? mileageTotal : 0);
+    - (mileageSubtracted ? extras.mileageTotal : 0)
+    - (extrasSubtracted.komandirovki ? extras.komandirovki : 0)
+    - (extrasSubtracted.chayevye ? extras.chayevye : 0)
+    - (extrasSubtracted.moiki ? extras.moiki : 0)
+    - (extrasSubtracted.porucheniya ? extras.porucheniya : 0);
 
   useEffect(() => {
     const target = targetSalary;
@@ -88,6 +94,10 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
     return () => cancelAnimationFrame(animRef.current);
   }, [targetSalary]);
 
+  const toggleExtra = (key: string) => {
+    setExtrasSubtracted(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
   return (
     <div className="sc">
       <div className="sc-total">
@@ -102,10 +112,10 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({
 
       <MonthSummary
         monthData={monthData}
-        businessTripSubtracted={businessTripSubtracted}
-        onToggleBusinessTrip={onToggleBusinessTrip}
         mileageSubtracted={mileageSubtracted}
         onToggleMileage={() => setMileageSubtracted(p => !p)}
+        extrasSubtracted={extrasSubtracted}
+        onToggleExtra={toggleExtra}
       />
 
       <Calendar

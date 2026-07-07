@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import type { Profile } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { calculateMonthStats, RATE_COLORS } from '../utils/salaryCalculations';
@@ -30,8 +30,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
   const [userMonths, setUserMonths] = useState<MonthData[]>([]);
   const [userCalendarDate, setUserCalendarDate] = useState(new Date());
   const [loadingUserCalendar, setLoadingUserCalendar] = useState(false);
-  const [userBusinessTrip, setUserBusinessTrip] = useState(false);
   const [userMileage, setUserMileage] = useState(false);
+  const [userExtrasSubtracted, setUserExtrasSubtracted] = useState<Record<string, boolean>>({});
+  const [monthDisplayValue, setMonthDisplayValue] = useState(0);
+  const animRef = useRef<number>(0);
 
   useEffect(() => {
     loadDashboard();
@@ -87,8 +89,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
     setSelectedUser(user);
     setLoadingUserCalendar(true);
     setUserCalendarDate(new Date());
-    setUserBusinessTrip(false);
     setUserMileage(false);
+    setUserExtrasSubtracted({});
 
     const { data } = await supabase.from('months').select('*').eq('user_id', user.id);
     if (data) {
@@ -104,6 +106,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
     return userMonths.find(md => md.year === y && md.month === m) || { year: y, month: m, days: [] };
   })();
 
+  const monthStats = useMemo(() => {
+    if (!userMonthData) return null;
+    return calculateMonthStats(userMonthData);
+  }, [userMonthData]);
+
+  useEffect(() => {
+    if (!monthStats) return;
+    const target = monthStats.totalSalary;
+    const start = monthDisplayValue;
+    const diff = target - start;
+    if (diff === 0) return;
+
+    const duration = 800;
+    const startTime = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 0.5 * (1 - Math.cos(Math.PI * progress));
+      setMonthDisplayValue(Math.round((start + diff * eased) * 10) / 10);
+      if (progress < 1) {
+        animRef.current = requestAnimationFrame(animate);
+      }
+    };
+    animRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [monthStats?.totalSalary]);
+
   if (selectedUser && userMonthData) {
     return (
       <div className="dashboard">
@@ -118,6 +147,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
           <span>·</span>
           <span>{selectedUser.months} мес.</span>
         </div>
+
+        {monthStats && (
+          <div className="dash-month-total">
+            <div className="dash-month-total-row">
+              <div className={'dash-month-total-val' + (monthStats.totalSalary === 0 ? ' sc-zero' : ' sc-active')}>
+                {monthDisplayValue}
+              </div>
+              <div className="dash-month-total-cur">BYN</div>
+            </div>
+            <div className="dash-month-total-days">{monthStats.workDays} рабочих дней</div>
+          </div>
+        )}
 
         {loadingUserCalendar ? (
           <div className="dash-loading">загрузка...</div>
@@ -140,10 +181,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
 
             <MonthSummary
               monthData={userMonthData}
-              businessTripSubtracted={userBusinessTrip}
-              onToggleBusinessTrip={() => setUserBusinessTrip(p => !p)}
               mileageSubtracted={userMileage}
               onToggleMileage={() => setUserMileage(p => !p)}
+              extrasSubtracted={userExtrasSubtracted}
+              onToggleExtra={(key) => setUserExtrasSubtracted(prev => ({ ...prev, [key]: !prev[key] }))}
             />
           </>
         )}

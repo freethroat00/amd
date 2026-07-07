@@ -17,7 +17,6 @@ function App() {
   const { toggle: toggleTheme } = useTheme();
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [businessTripSubtracted, setBusinessTripSubtracted] = useState(false);
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -87,8 +86,6 @@ function App() {
           currentMonth={currentMonth}
           onUpdateRates={updateRates}
           onNavigateMonth={navigateMonth}
-          businessTripSubtracted={businessTripSubtracted}
-          onToggleBusinessTrip={() => setBusinessTripSubtracted(p => !p)}
         />
         <Notes
           notes={notes}

@@ -53,3 +53,65 @@
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
+
+/* Допы expanded */
+.ms-dopy {
+  flex: 1.5;
+  padding: 0;
+  overflow: hidden;
+}
+.ms-dopy .ms-pill-btn-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.ms-dopy .ms-pill-btn-full:active {
+  transform: scale(0.98);
+}
+.ms-dopy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 6px 8px;
+}
+.ms-sub-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--bg-cell);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ms-sub-cell:active {
+  transform: scale(0.97);
+}
+.ms-sub-active {
+  background: #ff3b30;
+  border-color: #ff3b30;
+}
+.ms-sub-active .ms-sub-label {
+  color: rgba(255,255,255,0.8);
+}
+.ms-sub-active .ms-sub-val {
+  color: #fff;
+}
+.ms-sub-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+.ms-sub-val {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
