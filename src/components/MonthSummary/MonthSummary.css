@@ -99,38 +99,8 @@
   gap: 8px;
   padding: 16px 20px 20px;
 }
-.ms-sub-cell {
+.ms-modal-pills {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--bg-cell);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.ms-sub-cell:active {
-  transform: scale(0.97);
-}
-.ms-sub-active {
-  background: #ff3b30;
-  border-color: #ff3b30;
-}
-.ms-sub-active .ms-sub-label {
-  color: rgba(255,255,255,0.8);
-}
-.ms-sub-active .ms-sub-val {
-  color: #fff;
-}
-.ms-sub-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text);
-}
-.ms-sub-val {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
+  gap: 8px;
+  padding: 16px 20px 20px;
 }

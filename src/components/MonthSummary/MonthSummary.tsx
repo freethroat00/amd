@@ -98,15 +98,15 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
               <span className="ms-modal-title">Допы</span>
               <button className="ms-modal-close" onClick={() => setDopyOpen(false)}>{'\u2715'}</button>
             </div>
-            <div className="ms-modal-body">
+            <div className="ms-modal-pills">
               {EXTRA_ITEMS.map(item => (
                 <button
                   key={item.key}
-                  className={'ms-sub-cell' + (extrasSubtracted[item.key] ? ' ms-sub-active' : '')}
+                  className={'ms-pill ms-pill-btn' + (extrasSubtracted[item.key] ? ' ms-pill-subtracted' : '')}
                   onClick={() => onToggleExtra(item.key)}
                 >
-                  <span className="ms-sub-label">{item.label}</span>
-                  <span className="ms-sub-val">{extrasMap[item.key]}</span>
+                  <span className="ms-pill-label">{item.label}</span>
+                  <span className="ms-pill-val">{extrasMap[item.key]}</span>
                 </button>
               ))}
             </div>
