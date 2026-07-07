@@ -58,7 +58,9 @@
 .ms-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,18 +69,67 @@
 }
 .ms-modal {
   background: var(--bg-panel);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--border);
   border-radius: 20px;
+  padding: 20px 16px 24px;
   width: 100%;
-  max-width: 340px;
-  overflow: hidden;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
 }
-.ms-modal-pills {
+.ms-modal-row {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  padding: 20px;
 }
-.ms-modal-pills .ms-pill {
+.ms-modal-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: var(--bg-cell);
+  border: 1.5px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  font-family: var(--font);
+}
+.ms-modal-card:active {
+  transform: scale(0.97);
+}
+.ms-modal-card.ms-modal-active {
+  background: #ff3b30;
+  border-color: #ff3b30;
+}
+.ms-modal-card.ms-modal-active .ms-modal-dot {
+  background: #fff;
+}
+.ms-modal-card.ms-modal-active .ms-modal-label {
+  color: #fff;
+}
+.ms-modal-card.ms-modal-active .ms-modal-val {
+  color: #fff;
+}
+.ms-modal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.ms-modal-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
   flex: 1;
-  min-width: 0;
+  text-align: left;
+  text-transform: capitalize;
+}
+.ms-modal-val {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
