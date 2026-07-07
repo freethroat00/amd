@@ -54,38 +54,57 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Допы expanded */
-.ms-dopy {
-  flex: 1.5;
-  padding: 0;
+/* Modal */
+.ms-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.ms-modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 340px;
   overflow: hidden;
 }
-.ms-dopy .ms-pill-btn-full {
+.ms-modal-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  width: 100%;
-  padding: 10px 6px;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.ms-modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.ms-modal-close {
   background: none;
   border: none;
+  font-size: 1.1rem;
+  color: var(--text-dim);
   cursor: pointer;
+  padding: 4px;
 }
-.ms-dopy .ms-pill-btn-full:active {
-  transform: scale(0.98);
-}
-.ms-dopy-list {
+.ms-modal-body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 0 6px 8px;
+  gap: 8px;
+  padding: 16px 20px 20px;
 }
 .ms-sub-cell {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 8px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
   background: var(--bg-cell);
   border: 1px solid var(--border);
   cursor: pointer;
@@ -105,12 +124,12 @@
   color: #fff;
 }
 .ms-sub-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
 }
 .ms-sub-val {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--text);
   font-variant-numeric: tabular-nums;

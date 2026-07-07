@@ -21,7 +21,7 @@ const EXTRA_ITEMS = [
 export const MonthSummary: React.FC<MonthSummaryProps> = ({
   monthData, mileageSubtracted, onToggleMileage, extrasSubtracted, onToggleExtra
 }) => {
-  const [dopyExpanded, setDopyExpanded] = useState(false);
+  const [dopyOpen, setDopyOpen] = useState(false);
 
   let orders = 0;
   let loadingCount = 0;
@@ -65,45 +65,54 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
   const dopyTotal = komandirovki + chayevye + moiki + porucheniya;
 
   return (
-    <div className="ms">
-      <div className="ms-pill">
-        <span className="ms-pill-label">Точки</span>
-        <span className="ms-pill-val">{orders}</span>
-      </div>
-      <div className="ms-pill">
-        <span className="ms-pill-label">Загрузки</span>
-        <span className="ms-pill-val">{loadingCount}</span>
-      </div>
-      <button
-        className={'ms-pill ms-pill-btn' + (mileageSubtracted ? ' ms-pill-subtracted' : '')}
-        onClick={onToggleMileage}
-      >
-        <span className="ms-pill-label">Пробег</span>
-        <span className="ms-pill-val">{mileagePay}</span>
-      </button>
-      <div className={'ms-pill ms-dopy' + (dopyExpanded ? ' ms-dopy-open' : '')}>
+    <>
+      <div className="ms">
+        <div className="ms-pill">
+          <span className="ms-pill-label">Точки</span>
+          <span className="ms-pill-val">{orders}</span>
+        </div>
+        <div className="ms-pill">
+          <span className="ms-pill-label">Загрузки</span>
+          <span className="ms-pill-val">{loadingCount}</span>
+        </div>
         <button
-          className="ms-pill-btn-full"
-          onClick={() => setDopyExpanded(p => !p)}
+          className={'ms-pill ms-pill-btn' + (mileageSubtracted ? ' ms-pill-subtracted' : '')}
+          onClick={onToggleMileage}
+        >
+          <span className="ms-pill-label">Пробег</span>
+          <span className="ms-pill-val">{mileagePay}</span>
+        </button>
+        <button
+          className="ms-pill ms-pill-btn"
+          onClick={() => setDopyOpen(true)}
         >
           <span className="ms-pill-label">Допы</span>
           <span className="ms-pill-val">{dopyTotal}</span>
         </button>
-        {dopyExpanded && (
-          <div className="ms-dopy-list">
-            {EXTRA_ITEMS.map(item => (
-              <button
-                key={item.key}
-                className={'ms-sub-cell' + (extrasSubtracted[item.key] ? ' ms-sub-active' : '')}
-                onClick={() => onToggleExtra(item.key)}
-              >
-                <span className="ms-sub-label">{item.label}</span>
-                <span className="ms-sub-val">{extrasMap[item.key]}</span>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
-    </div>
+
+      {dopyOpen && (
+        <div className="ms-modal-overlay" onClick={() => setDopyOpen(false)}>
+          <div className="ms-modal" onClick={e => e.stopPropagation()}>
+            <div className="ms-modal-header">
+              <span className="ms-modal-title">Допы</span>
+              <button className="ms-modal-close" onClick={() => setDopyOpen(false)}>{'\u2715'}</button>
+            </div>
+            <div className="ms-modal-body">
+              {EXTRA_ITEMS.map(item => (
+                <button
+                  key={item.key}
+                  className={'ms-sub-cell' + (extrasSubtracted[item.key] ? ' ms-sub-active' : '')}
+                  onClick={() => onToggleExtra(item.key)}
+                >
+                  <span className="ms-sub-label">{item.label}</span>
+                  <span className="ms-sub-val">{extrasMap[item.key]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
