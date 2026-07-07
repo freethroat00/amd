@@ -12,10 +12,10 @@ interface MonthSummaryProps {
 }
 
 const EXTRA_ITEMS = [
-  { key: 'komandirovki', label: 'Командиры', color: '#ff9500' },
-  { key: 'chayevye', label: 'Чаевые', color: '#34c759' },
-  { key: 'moiki', label: 'Мойки', color: '#af52de' },
-  { key: 'porucheniya', label: 'Поручения', color: '#007aff' },
+  { key: 'komandirovki', label: 'Командиры' },
+  { key: 'chayevye', label: 'Чаевые' },
+  { key: 'moiki', label: 'Мойки' },
+  { key: 'porucheniya', label: 'Поручения' },
 ] as const;
 
 export const MonthSummary: React.FC<MonthSummaryProps> = ({
@@ -83,8 +83,8 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
           <span className="ms-pill-val">{mileagePay}</span>
         </button>
         <button
-          className="ms-pill ms-pill-btn"
-          onClick={() => setDopyOpen(true)}
+          className={'ms-pill ms-pill-btn' + (dopyOpen ? ' ms-pill-active' : '')}
+          onClick={() => setDopyOpen(p => !p)}
         >
           <span className="ms-pill-label">Допы</span>
           <span className="ms-pill-val">{dopyTotal}</span>
@@ -92,22 +92,17 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
       </div>
 
       {dopyOpen && (
-        <div className="ms-modal-overlay" onClick={() => setDopyOpen(false)}>
-          <div className="ms-modal" onClick={e => e.stopPropagation()}>
-            <div className="ms-modal-row">
-              {EXTRA_ITEMS.map(item => (
-                <button
-                  key={item.key}
-                  className={'ms-modal-card' + (extrasSubtracted[item.key] ? ' ms-modal-active' : '')}
-                  onClick={() => onToggleExtra(item.key)}
-                >
-                  <span className="ms-modal-dot" style={{ background: extrasSubtracted[item.key] ? '#fff' : item.color }} />
-                  <span className="ms-modal-label">{item.label}</span>
-                  <span className="ms-modal-val">{extrasMap[item.key]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="ms ms-sub">
+          {EXTRA_ITEMS.map(item => (
+            <button
+              key={item.key}
+              className={'ms-pill ms-pill-btn' + (extrasSubtracted[item.key] ? ' ms-pill-subtracted' : '')}
+              onClick={() => onToggleExtra(item.key)}
+            >
+              <span className="ms-pill-label">{item.label}</span>
+              <span className="ms-pill-val">{extrasMap[item.key]}</span>
+            </button>
+          ))}
         </div>
       )}
     </>
