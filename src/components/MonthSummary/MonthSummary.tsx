@@ -94,10 +94,6 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
       {dopyOpen && (
         <div className="ms-modal-overlay" onClick={() => setDopyOpen(false)}>
           <div className="ms-modal" onClick={e => e.stopPropagation()}>
-            <div className="ms-modal-header">
-              <span className="ms-modal-title">Допы</span>
-              <button className="ms-modal-close" onClick={() => setDopyOpen(false)}>{'\u2715'}</button>
-            </div>
             <div className="ms-modal-pills">
               {EXTRA_ITEMS.map(item => (
                 <button

@@ -58,7 +58,7 @@
 .ms-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,34 +73,12 @@
   max-width: 340px;
   overflow: hidden;
 }
-.ms-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.ms-modal-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-}
-.ms-modal-close {
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  color: var(--text-dim);
-  cursor: pointer;
-  padding: 4px;
-}
-.ms-modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px 20px 20px;
-}
 .ms-modal-pills {
   display: flex;
   gap: 8px;
-  padding: 16px 20px 20px;
+  padding: 20px;
+}
+.ms-modal-pills .ms-pill {
+  flex: 1;
+  min-width: 0;
 }
