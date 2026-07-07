@@ -62,7 +62,11 @@ export const MonthSummary: React.FC<MonthSummaryProps> = ({
     porucheniya,
   };
 
-  const dopyTotal = komandirovki + chayevye + moiki + porucheniya;
+  const dopyTotal = komandirovki + chayevye + moiki + porucheniya
+    - (extrasSubtracted.komandirovki ? komandirovki : 0)
+    - (extrasSubtracted.chayevye ? chayevye : 0)
+    - (extrasSubtracted.moiki ? moiki : 0)
+    - (extrasSubtracted.porucheniya ? porucheniya : 0);
 
   return (
     <>
