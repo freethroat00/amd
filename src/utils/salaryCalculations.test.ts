@@ -12,6 +12,26 @@ describe('Salary Calculations', () => {
     expect(calculateRateSalary(rate)).toBe(120);
   });
 
+  test('calculateRateSalary for minsk with default flags', () => {
+    const rate: WorkRate = { type: 'minsk', minskFlags: ['supplier', 'pzv'] };
+    expect(calculateRateSalary(rate)).toBe(80);
+  });
+
+  test('calculateRateSalary for minsk with all flags', () => {
+    const rate: WorkRate = { type: 'minsk', minskFlags: ['supplier', 'pzv', 'kbt'] };
+    expect(calculateRateSalary(rate)).toBe(200);
+  });
+
+  test('calculateRateSalary for minsk with only kbt', () => {
+    const rate: WorkRate = { type: 'minsk', minskFlags: ['kbt'] };
+    expect(calculateRateSalary(rate)).toBe(120);
+  });
+
+  test('calculateRateSalary for minsk with no flags', () => {
+    const rate: WorkRate = { type: 'minsk', minskFlags: [] };
+    expect(calculateRateSalary(rate)).toBe(0);
+  });
+
   test('calculateRateSalary for region without trip', () => {
     const rate: WorkRate = {
       type: 'region',
@@ -43,6 +63,33 @@ describe('Salary Calculations', () => {
     const day: WorkDay = {
       date: '2024-01-15',
       rates: []
+    };
+    expect(calculateDaySalary(day)).toBe(0);
+  });
+
+  test('calculateDaySalary with dayAdjustment', () => {
+    const day: WorkDay = {
+      date: '2024-01-15',
+      rates: [{ type: 'minsk', minskFlags: ['supplier', 'pzv'] }],
+      dayAdjustment: 20
+    };
+    expect(calculateDaySalary(day)).toBe(100);
+  });
+
+  test('calculateDaySalary with negative dayAdjustment', () => {
+    const day: WorkDay = {
+      date: '2024-01-15',
+      rates: [{ type: 'minsk', minskFlags: ['supplier', 'pzv'] }],
+      dayAdjustment: -30
+    };
+    expect(calculateDaySalary(day)).toBe(50);
+  });
+
+  test('calculateDaySalary with dayAdjustment floor at 0', () => {
+    const day: WorkDay = {
+      date: '2024-01-15',
+      rates: [{ type: 'minsk', minskFlags: ['supplier', 'pzv'] }],
+      dayAdjustment: -100
     };
     expect(calculateDaySalary(day)).toBe(0);
   });

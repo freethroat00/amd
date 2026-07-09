@@ -1,4 +1,13 @@
-export type RateType = 'pzv' | 'kbt' | 'region' | 'loading' | 'carwash' | 'errands';
+export type RateType = 'pzv' | 'kbt' | 'minsk' | 'region' | 'loading' | 'carwash' | 'errands';
+
+export type MinskFlag = 'supplier' | 'pzv' | 'kbt';
+
+export const MINSK_FLAGS: { key: MinskFlag; label: string; rate: number }[] = [
+  { key: 'supplier', label: 'Поставщик', rate: 40 },
+  { key: 'pzv',      label: 'ПВЗ',      rate: 40 },
+  { key: 'kbt',      label: 'КБТ',      rate: 120 },
+];
+export const DEFAULT_MINSK_FLAGS: MinskFlag[] = ['supplier', 'pzv'];
 
 export interface RegionDetails {
   orderCount: number;
@@ -12,6 +21,7 @@ export interface WorkRate {
   multiplier?: number;
   regionDetails?: RegionDetails;
   errandsAmount?: number;
+  minskFlags?: MinskFlag[];
 }
 
 export interface WorkDay {
@@ -19,11 +29,15 @@ export interface WorkDay {
   rates: WorkRate[];
   isDayOff?: boolean;
   hasLoading?: boolean;
+  dayAdjustment?: number;
 }
 
 export interface RateConfig {
   pzv: number;
   kbt: number;
+  minskSupplier: number;
+  minskPzv: number;
+  minskKbt: number;
   regionPerOrder: number;
   businessTrip: number;
   loadingBonus: number;
@@ -33,6 +47,9 @@ export interface RateConfig {
 export const DEFAULT_RATE_CONFIG: RateConfig = {
   pzv: 80,
   kbt: 120,
+  minskSupplier: 40,
+  minskPzv: 40,
+  minskKbt: 120,
   regionPerOrder: 7,
   businessTrip: 50,
   loadingBonus: 20,

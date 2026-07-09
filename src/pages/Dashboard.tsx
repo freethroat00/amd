@@ -53,7 +53,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ profile, onBack }) => {
         const userMonthsData = monthsData.filter(m => m.user_id === p.id);
         let totalSalary = 0;
         let totalWorkDays = 0;
-        const rateBreakdown: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
+        const rateBreakdown: Record<RateType, number> = { pzv: 0, kbt: 0, minsk: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
 
         userMonthsData.forEach(m => {
           const monthData: MonthData = { year: m.year, month: m.month, days: m.data };

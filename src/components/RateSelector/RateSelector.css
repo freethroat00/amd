@@ -39,34 +39,7 @@
 }
 .rs-options { display: flex; flex-direction: column; gap: 8px; }
 
-/* Card row with x0.5 button */
-.rs-x05 {
-  flex-shrink: 0;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1.5px solid rgba(255,255,255,0.5);
-  background: transparent;
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: var(--font);
-}
-.rs-x05:active { transform: scale(0.92); }
-.rs-x05-active {
-  border-color: #fff;
-  background: #fff;
-}
-
-/* x0.5 contrasting fill per card color */
-.rs-card[data-color="#34c759"] .rs-x05-active { color: #34c759; }
-.rs-card[data-color="#ff9500"] .rs-x05-active { color: #ff9500; }
-.rs-card[data-color="#007aff"] .rs-x05-active { color: #007aff; }
-.rs-card[data-color="#af52de"] .rs-x05-active { color: #af52de; }
-
-/* Rate cards - белые, заливаются при .rs-active */
+/* Rate cards */
 .rs-card {
   display: flex;
   align-items: center;
@@ -82,7 +55,6 @@
 }
 .rs-card:active { transform: scale(0.97); }
 
-/* Заливка по классу rs-active */
 .rs-card.rs-active[data-color="#34c759"] { background: #34c759; border-color: #34c759; }
 .rs-card.rs-active[data-color="#34c759"] .rs-card-dot { background: #fff; }
 .rs-card.rs-active[data-color="#34c759"] .rs-card-label { color: #fff; }
@@ -101,9 +73,11 @@
 
 .rs-card-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .rs-card-label { font-size: 1rem; font-weight: 700; color: var(--text); flex: 1; text-align: left; text-transform: capitalize; }
-.rs-card-mult { font-size: 0.8rem; font-weight: 700; color: var(--text-dim); opacity: 0.6; }
 
-/* Region pills - без контейнера */
+/* Minsk flags block */
+.rs-minsk-block { margin-top: 4px; }
+
+/* Pills */
 .rs-region-block { margin-top: 10px; }
 .rs-pill-row {
   display: flex;
@@ -125,6 +99,12 @@
   font-weight: 700;
   color: var(--text);
   text-transform: capitalize;
+}
+.rs-pill-rate {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  opacity: 0.6;
 }
 .rs-pill-input {
   background: transparent;
@@ -151,6 +131,61 @@
 }
 .rs-pill.rs-pill-active .rs-pill-label { color: #fff; }
 .rs-pill.rs-pill-active .rs-pill-input { color: #fff; }
+.rs-pill.rs-pill-active .rs-pill-rate { color: #fff; opacity: 0.8; }
+
+/* Slider */
+.rs-slider-block {
+  margin-top: 12px;
+  padding: 0 4px;
+}
+.rs-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border-strong);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+.rs-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-panel);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+.rs-slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+.rs-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-panel);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+.rs-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.rs-slider-current {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text);
+}
 
 /* Preview */
 .rs-preview {
@@ -160,12 +195,21 @@
   background: var(--bg-cell);
   border: 1px solid var(--border-strong);
   border-radius: 999px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 .rs-preview-val {
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--text);
   transition: all 0.2s ease;
+}
+.rs-preview-adj {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
 }
 .rs-preview-zero .rs-preview-val {
   color: var(--text-dim);

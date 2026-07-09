@@ -27,12 +27,12 @@ function App() {
     return createDefaultMonthData(currentYear, currentMonth);
   }, [months, currentYear, currentMonth]);
 
-  const updateRates = useCallback((date: string, rates: WorkRate[]) => {
+  const updateRates = useCallback((date: string, rates: WorkRate[], dayAdjustment: number) => {
     const updated = { ...monthData };
     const dayIndex = updated.days.findIndex(d => d.date === date);
     if (dayIndex !== -1) {
       updated.days = [...updated.days];
-      updated.days[dayIndex] = { ...updated.days[dayIndex], rates };
+      updated.days[dayIndex] = { ...updated.days[dayIndex], rates, dayAdjustment };
       saveMonth(updated.year, updated.month, updated.days);
       trackEvent('rate_change', { date, rates: rates.map(r => r.type) }, user?.id);
     }

@@ -4,6 +4,7 @@ import { DEFAULT_RATE_CONFIG } from '../types';
 export const RATE_LABELS: Record<RateType, string> = {
   pzv: 'Минск',
   kbt: 'КБТ',
+  minsk: 'Минск',
   region: 'Регион',
   loading: 'Загрузка',
   carwash: 'Мойка',
@@ -13,6 +14,7 @@ export const RATE_LABELS: Record<RateType, string> = {
 export const RATE_COLORS: Record<RateType, string> = {
   pzv: '#34c759',
   kbt: '#007aff',
+  minsk: '#34c759',
   region: '#ff9500',
   loading: '#af52de',
   carwash: '#af52de',
@@ -22,6 +24,7 @@ export const RATE_COLORS: Record<RateType, string> = {
 export const RATE_BG: Record<RateType, string> = {
   pzv: 'rgba(52,199,89,0.1)',
   kbt: 'rgba(0,122,255,0.1)',
+  minsk: 'rgba(52,199,89,0.1)',
   region: 'rgba(255,149,0,0.1)',
   loading: 'rgba(175,82,222,0.1)',
   carwash: 'rgba(175,82,222,0.1)',
@@ -33,6 +36,15 @@ export const calculateRateSalary = (rate: WorkRate, config: RateConfig = DEFAULT
   switch (rate.type) {
     case 'pzv': return config.pzv * m;
     case 'kbt': return config.kbt * m;
+    case 'minsk': {
+      const flags = rate.minskFlags ?? [];
+      return flags.reduce((sum, f) => {
+        if (f === 'supplier') return sum + config.minskSupplier;
+        if (f === 'pzv') return sum + config.minskPzv;
+        if (f === 'kbt') return sum + config.minskKbt;
+        return sum;
+      }, 0);
+    }
     case 'region':
       if (!rate.regionDetails) return 0;
       const orderPay = rate.regionDetails.orderCount * config.regionPerOrder;
@@ -48,7 +60,9 @@ export const calculateRateSalary = (rate: WorkRate, config: RateConfig = DEFAULT
 };
 
 export const calculateDaySalary = (day: WorkDay, config: RateConfig = DEFAULT_RATE_CONFIG): number => {
-  return day.rates.reduce((total, rate) => total + calculateRateSalary(rate, config), 0);
+  const base = day.rates.reduce((total, rate) => total + calculateRateSalary(rate, config), 0);
+  const adjustment = day.dayAdjustment ?? 0;
+  return Math.max(0, base + adjustment);
 };
 
 export const calculateMonthSalary = (monthData: MonthData, config: RateConfig = DEFAULT_RATE_CONFIG): number => {
@@ -56,7 +70,7 @@ export const calculateMonthSalary = (monthData: MonthData, config: RateConfig = 
 };
 
 export const calculateRateStats = (monthData: MonthData, config: RateConfig = DEFAULT_RATE_CONFIG) => {
-  const stats: Record<RateType, number> = { pzv: 0, kbt: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
+  const stats: Record<RateType, number> = { pzv: 0, kbt: 0, minsk: 0, region: 0, loading: 0, carwash: 0, errands: 0 };
   monthData.days.forEach(day => {
     day.rates.forEach(rate => { stats[rate.type] += calculateRateSalary(rate, config); });
   });

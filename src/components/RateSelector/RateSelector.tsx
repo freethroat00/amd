@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import type { WorkRate, RateType, RegionDetails } from '../../types';
-import { DEFAULT_RATE_CONFIG } from '../../types';
+import type { WorkRate, RateType, RegionDetails, MinskFlag } from '../../types';
+import { MINSK_FLAGS, DEFAULT_MINSK_FLAGS } from '../../types';
 import { RATE_LABELS, RATE_COLORS } from '../../utils/salaryCalculations';
 import './RateSelector.css';
 
 interface RateSelectorProps {
   currentRates: WorkRate[];
-  onToggleRate: (rates: WorkRate[]) => void;
+  dayAdjustment: number;
+  onToggleRate: (rates: WorkRate[], dayAdjustment: number) => void;
   onClose: () => void;
 }
 
 export const RateSelector: React.FC<RateSelectorProps> = ({
-  currentRates, onToggleRate, onClose
+  currentRates, dayAdjustment, onToggleRate, onClose
 }) => {
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -40,48 +41,108 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
 
   const toggleRate = (type: RateType) => {
     if (isRateSelected(type)) {
-      onToggleRate(currentRates.filter(r => r.type !== type));
+      onToggleRate(currentRates.filter(r => r.type !== type), dayAdjustment);
     } else {
       const nr: WorkRate = type === 'region'
         ? { type, regionDetails }
         : type === 'errands'
           ? { type, errandsAmount: 0 }
-          : { type };
-      onToggleRate([...currentRates, nr]);
+          : type === 'minsk'
+            ? { type, minskFlags: [...DEFAULT_MINSK_FLAGS] }
+            : { type };
+      onToggleRate([...currentRates, nr], dayAdjustment);
     }
   };
 
-  const toggleMultiplier = (type: RateType) => {
-    onToggleRate(currentRates.map(r => {
-      if (r.type !== type) return r;
-      return { ...r, multiplier: (r.multiplier ?? 1) === 1 ? 0.5 : 1 };
-    }));
+  const getMinskFlags = (): MinskFlag[] => {
+    const r = currentRates.find(r => r.type === 'minsk');
+    return r?.minskFlags ?? [];
+  };
+
+  const toggleMinskFlag = (flag: MinskFlag) => {
+    const current = getMinskFlags();
+    let next: MinskFlag[];
+
+    if (current.includes(flag)) {
+      next = current.filter(f => f !== flag);
+      if (next.length === 0) next = ['pzv'];
+    } else {
+      next = [...current, flag];
+    }
+
+    const newRates = currentRates.map(r =>
+      r.type === 'minsk' ? { ...r, minskFlags: next } : r
+    );
+
+    const oldSlider = getCurrentSliderValue();
+    const newBase = next.reduce((sum, f) => {
+      const found = MINSK_FLAGS.find(mf => mf.key === f);
+      return sum + (found?.rate ?? 0);
+    }, 0);
+    const allThree = next.length === 3;
+    const newMax = allThree ? 200 : 160;
+    const newSlider = Math.min(Math.max(oldSlider, 0), newMax);
+    const newAdjustment = newSlider - newBase;
+
+    onToggleRate(newRates, newAdjustment);
+  };
+
+  const getCurrentSliderValue = (): number => {
+    const flags = getMinskFlags();
+    const base = flags.reduce((sum, f) => {
+      const found = MINSK_FLAGS.find(mf => mf.key === f);
+      return sum + (found?.rate ?? 0);
+    }, 0);
+    return base + dayAdjustment;
+  };
+
+  const handleSliderChange = (value: number) => {
+    const flags = getMinskFlags();
+    const base = flags.reduce((sum, f) => {
+      const found = MINSK_FLAGS.find(mf => mf.key === f);
+      return sum + (found?.rate ?? 0);
+    }, 0);
+    onToggleRate(currentRates, value - base);
   };
 
   const updateRegion = (updates: Partial<RegionDetails>) => {
     const nd = { ...regionDetails, ...updates };
     setRegionDetails(nd);
-    onToggleRate(currentRates.map(r => r.type === 'region' ? { ...r, regionDetails: nd } : r));
+    onToggleRate(currentRates.map(r => r.type === 'region' ? { ...r, regionDetails: nd } : r), dayAdjustment);
   };
-
-  const getM = (type: RateType) => currentRates.find(r => r.type === type)?.multiplier ?? 1;
 
   const dayTotal = currentRates.reduce((sum, r) => {
     const m = r.multiplier ?? 1;
-    if (r.type === 'pzv') return sum + DEFAULT_RATE_CONFIG.pzv * m;
-    if (r.type === 'kbt') return sum + DEFAULT_RATE_CONFIG.kbt * m;
+    if (r.type === 'pzv') return sum + 80 * m;
+    if (r.type === 'kbt') return sum + 120 * m;
+    if (r.type === 'minsk') {
+      const flags = r.minskFlags ?? [];
+      return sum + flags.reduce((s, f) => {
+        if (f === 'supplier') return s + 40;
+        if (f === 'pzv') return s + 40;
+        if (f === 'kbt') return s + 120;
+        return s;
+      }, 0);
+    }
     if (r.type === 'region' && r.regionDetails) {
-      const base = r.regionDetails.orderCount * DEFAULT_RATE_CONFIG.regionPerOrder
-        + (r.regionDetails.hasBusinessTrip ? DEFAULT_RATE_CONFIG.businessTrip : 0)
+      const base = r.regionDetails.orderCount * 7
+        + (r.regionDetails.hasBusinessTrip ? 50 : 0)
         + (r.regionDetails.tips || 0)
         + Math.round(Math.max(0, (r.regionDetails.mileage || 0) - 700) * 0.1 * 10) / 10;
       return sum + base * m;
     }
-    if (r.type === 'loading') return sum + DEFAULT_RATE_CONFIG.loadingBonus * m;
-    if (r.type === 'carwash') return sum + DEFAULT_RATE_CONFIG.loadingBonus;
+    if (r.type === 'loading') return sum + 20 * m;
+    if (r.type === 'carwash') return sum + 20;
     if (r.type === 'errands') return sum + (r.errandsAmount || 0);
     return sum;
   }, 0);
+
+  const minskSelected = isRateSelected('minsk');
+  const minskFlags = getMinskFlags();
+  const sliderValue = getCurrentSliderValue();
+  const allThree = minskFlags.length === 3;
+  const sliderMax = allThree ? 200 : 160;
+  const adjustment = dayAdjustment;
 
   const regionSel = isRateSelected('region');
   const extrasSel = isRateSelected('loading') || isRateSelected('carwash') || isRateSelected('errands');
@@ -97,23 +158,51 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
         <div className="rs-options">
           {/* Минск */}
           <button
-            data-color={RATE_COLORS.pzv}
-            className={'rs-card' + (isRateSelected('pzv') ? ' rs-active' : '')}
-            onClick={() => toggleRate('pzv')}
+            data-color={RATE_COLORS.minsk}
+            className={'rs-card' + (minskSelected ? ' rs-active' : '')}
+            onClick={() => toggleRate('minsk')}
           >
-            <span className="rs-card-dot" style={isRateSelected('pzv') ? undefined : { backgroundColor: RATE_COLORS.pzv }} />
-            <span className="rs-card-label" style={isRateSelected('pzv') ? undefined : { color: RATE_COLORS.pzv }}>
-              {RATE_LABELS.pzv}
+            <span className="rs-card-dot" style={minskSelected ? undefined : { backgroundColor: RATE_COLORS.minsk }} />
+            <span className="rs-card-label" style={minskSelected ? undefined : { color: RATE_COLORS.minsk }}>
+              {RATE_LABELS.minsk}
             </span>
-            {isRateSelected('pzv') && (
-              <button
-                className={'rs-x05' + (getM('pzv') === 0.5 ? ' rs-x05-active' : '')}
-                onClick={(e) => { e.stopPropagation(); toggleMultiplier('pzv'); }}
-              >
-                x0.5
-              </button>
-            )}
           </button>
+
+          {minskSelected && (
+            <div className="rs-minsk-block">
+              <div className="rs-pill-row">
+                {MINSK_FLAGS.map(f => (
+                  <button
+                    key={f.key}
+                    className={'rs-pill rs-pill-toggle' + (minskFlags.includes(f.key) ? ' rs-pill-active' : '')}
+                    onClick={() => toggleMinskFlag(f.key)}
+                  >
+                    <span className="rs-pill-label">{f.label}</span>
+                    <span className="rs-pill-rate">{f.rate}</span>
+                  </button>
+                ))}
+              </div>
+
+              {minskFlags.length > 0 && (
+                <div className="rs-slider-block">
+                  <input
+                    type="range"
+                    className="rs-slider"
+                    min={0}
+                    max={sliderMax}
+                    step={10}
+                    value={sliderValue}
+                    onChange={e => handleSliderChange(Number(e.target.value))}
+                  />
+                  <div className="rs-slider-labels">
+                    <span>0</span>
+                    <span className="rs-slider-current">{sliderValue} BYN</span>
+                    <span>{sliderMax}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Регион */}
           <button
@@ -125,7 +214,6 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
             <span className="rs-card-label" style={regionSel ? undefined : { color: RATE_COLORS.region }}>
               {RATE_LABELS.region}
             </span>
-            {regionSel && getM('region') === 0.5 && <span className="rs-card-mult">x0.5</span>}
           </button>
 
           {regionSel && (
@@ -168,26 +256,6 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
             </div>
           )}
 
-          {/* КБТ */}
-          <button
-            data-color={RATE_COLORS.kbt}
-            className={'rs-card' + (isRateSelected('kbt') ? ' rs-active' : '')}
-            onClick={() => toggleRate('kbt')}
-          >
-            <span className="rs-card-dot" style={isRateSelected('kbt') ? undefined : { backgroundColor: RATE_COLORS.kbt }} />
-            <span className="rs-card-label" style={isRateSelected('kbt') ? undefined : { color: RATE_COLORS.kbt }}>
-              {RATE_LABELS.kbt}
-            </span>
-            {isRateSelected('kbt') && (
-              <button
-                className={'rs-x05' + (getM('kbt') === 0.5 ? ' rs-x05-active' : '')}
-                onClick={(e) => { e.stopPropagation(); toggleMultiplier('kbt'); }}
-              >
-                x0.5
-              </button>
-            )}
-          </button>
-
           {/* Допы */}
           <button
             data-color="#af52de"
@@ -203,40 +271,37 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
           {showExtras && (
             <div className="rs-region-block">
               <div className="rs-pill-row">
-                {/* Загрузка */}
                 <button
                   className={'rs-pill rs-pill-toggle' + (loadingSel ? ' rs-pill-active' : '')}
                   onClick={() => {
                     if (loadingSel) {
-                      onToggleRate(currentRates.filter(r => r.type !== 'loading'));
+                      onToggleRate(currentRates.filter(r => r.type !== 'loading'), dayAdjustment);
                     } else {
-                      onToggleRate([...currentRates, { type: 'loading' }]);
+                      onToggleRate([...currentRates, { type: 'loading' }], dayAdjustment);
                     }
                   }}
                 >
                   <span className="rs-pill-label">Загрузка</span>
                 </button>
 
-                {/* Мойка */}
                 <button
                   className={'rs-pill rs-pill-toggle' + (carwashSel ? ' rs-pill-active' : '')}
                   onClick={() => {
                     if (carwashSel) {
-                      onToggleRate(currentRates.filter(r => r.type !== 'carwash'));
+                      onToggleRate(currentRates.filter(r => r.type !== 'carwash'), dayAdjustment);
                     } else {
-                      onToggleRate([...currentRates, { type: 'carwash' }]);
+                      onToggleRate([...currentRates, { type: 'carwash' }], dayAdjustment);
                     }
                   }}
                 >
                   <span className="rs-pill-label">Мойка</span>
                 </button>
 
-                {/* Поручения */}
                 <div
                   className="rs-pill"
                   onClick={() => {
                     if (errandsSel && getErrandsAmount() === 0) {
-                      onToggleRate(currentRates.filter(r => r.type !== 'errands'));
+                      onToggleRate(currentRates.filter(r => r.type !== 'errands'), dayAdjustment);
                     }
                   }}
                 >
@@ -247,16 +312,16 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
                     onChange={e => {
                       const val = e.target.value === '' ? 0 : Number(e.target.value);
                       if (!errandsSel) {
-                        onToggleRate([...currentRates, { type: 'errands', errandsAmount: val }]);
+                        onToggleRate([...currentRates, { type: 'errands', errandsAmount: val }], dayAdjustment);
                       } else if (val === 0) {
-                        onToggleRate(currentRates.filter(r => r.type !== 'errands'));
+                        onToggleRate(currentRates.filter(r => r.type !== 'errands'), dayAdjustment);
                       } else {
-                        onToggleRate(currentRates.map(r => r.type === 'errands' ? { ...r, errandsAmount: val } : r));
+                        onToggleRate(currentRates.map(r => r.type === 'errands' ? { ...r, errandsAmount: val } : r), dayAdjustment);
                       }
                     }}
                     onFocus={() => {
                       if (!errandsSel) {
-                        onToggleRate([...currentRates, { type: 'errands', errandsAmount: 0 }]);
+                        onToggleRate([...currentRates, { type: 'errands', errandsAmount: 0 }], dayAdjustment);
                       }
                     }}
                     className="rs-pill-input"
@@ -269,7 +334,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
         </div>
 
         <div className={'rs-preview' + (dayTotal === 0 ? ' rs-preview-zero' : '')}>
-          <span className="rs-preview-val">{dayTotal} BYN</span>
+          <span className="rs-preview-val">{dayTotal + adjustment} BYN</span>
         </div>
       </div>
     </div>
