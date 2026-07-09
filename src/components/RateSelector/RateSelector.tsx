@@ -74,17 +74,7 @@ export const RateSelector: React.FC<RateSelectorProps> = ({
       r.type === 'minsk' ? { ...r, minskFlags: next } : r
     );
 
-    const oldSlider = getCurrentSliderValue();
-    const newBase = next.reduce((sum, f) => {
-      const found = MINSK_FLAGS.find(mf => mf.key === f);
-      return sum + (found?.rate ?? 0);
-    }, 0);
-    const allThree = next.length === 3;
-    const newMax = allThree ? 200 : 160;
-    const newSlider = Math.min(Math.max(oldSlider, 0), newMax);
-    const newAdjustment = newSlider - newBase;
-
-    onToggleRate(newRates, newAdjustment);
+    onToggleRate(newRates, 0);
   };
 
   const getCurrentSliderValue = (): number => {
