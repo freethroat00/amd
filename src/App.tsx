@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { useRemoteData } from './hooks/useRemoteData';
 import { useTheme } from './hooks/useTheme';
+import { useDetails } from './hooks/useDetails';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { SalaryCalculator } from './components/SalaryCalculator/SalaryCalculator';
@@ -15,6 +16,7 @@ function App() {
   const { user, profile, loading, anonymousSignIn } = useAuth();
   const { months, notes, loading: dataLoading, saveMonth, addNote, removeNote } = useRemoteData(user?.id ?? null);
   const { toggle: toggleTheme } = useTheme();
+  const { details, toggle: toggleDetails } = useDetails();
   const [showDashboard, setShowDashboard] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -72,7 +74,16 @@ function App() {
           <div className="user-actions">
             <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
               <span className="theme-toggle-track">
-                <span className="theme-toggle-thumb" />
+                <span className="theme-toggle-thumb">
+                  <span className="toggle-icon sun-icon" />
+                </span>
+              </span>
+            </button>
+            <button className="details-toggle" onClick={toggleDetails} aria-label="Toggle details">
+              <span className={'details-toggle-track' + (details ? ' details-active' : '')}>
+                <span className="details-toggle-thumb">
+                  <span className="toggle-icon grid-icon" />
+                </span>
               </span>
             </button>
             {profile?.role === 'admin' && (
@@ -86,6 +97,7 @@ function App() {
           currentMonth={currentMonth}
           onUpdateRates={updateRates}
           onNavigateMonth={navigateMonth}
+          showDetails={details}
         />
         <Notes
           notes={notes}

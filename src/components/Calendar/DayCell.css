@@ -33,10 +33,13 @@
   margin-top: 2px;
 }
 .cal-day-orders {
-  font-size: 0.55rem;
-  font-weight: 700;
-  color: var(--text-dim);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text);
   line-height: 1;
+  background: rgba(255,149,0,0.15);
+  padding: 1px 4px;
+  border-radius: 4px;
 }
 .cal-day-loading {
   width: 5px;
@@ -47,4 +50,15 @@
 .cal-day-trip {
   font-size: 0.5rem;
   line-height: 1;
+}
+.cal-day-flag {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.cal-day-carwash {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #af52de;
 }

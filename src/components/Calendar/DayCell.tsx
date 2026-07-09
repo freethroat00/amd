@@ -1,4 +1,4 @@
-import type { WorkDay, RateType } from '../../types';
+import type { WorkDay, RateType, MinskFlag } from '../../types';
 import { RATE_COLORS, RATE_BG } from '../../utils/salaryCalculations';
 import './DayCell.css';
 
@@ -12,6 +12,12 @@ interface DayCellProps {
   showDetails?: boolean;
 }
 
+const FLAG_COLORS: Record<MinskFlag, string> = {
+  supplier: '#34c759',
+  pzv: '#007aff',
+  kbt: '#ff9500',
+};
+
 export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToday, isWeekend, isSunday, isRegionDay, showDetails }) => {
   const dayNumber = new Date(workDay.date).getDate();
   const hasRates = workDay.rates.length > 0;
@@ -21,6 +27,10 @@ export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToda
   const orderCount = regionRate?.regionDetails?.orderCount || 0;
   const hasBusinessTrip = regionRate?.regionDetails?.hasBusinessTrip || false;
   const hasLoading = workDay.rates.some(r => r.type === 'loading');
+  const hasCarwash = workDay.rates.some(r => r.type === 'carwash');
+
+  const minskRate = workDay.rates.find(r => r.type === 'minsk');
+  const minskFlags = minskRate?.minskFlags ?? [];
 
   let cls = 'cal-day';
   if (isToday && hasRates) cls += ' cal-today-colored';
@@ -53,7 +63,11 @@ export const DayCell: React.FC<DayCellProps> = ({ workDay, onSelectRates, isToda
       {hasRates && showDetails && (
         <div className="cal-day-info">
           {orderCount > 0 && <span className="cal-day-orders" style={isLight ? { color: '#fff' } : undefined}>{orderCount}</span>}
+          {minskFlags.map(f => (
+            <span key={f} className="cal-day-flag" style={{ background: isLight ? '#fff' : FLAG_COLORS[f] }} />
+          ))}
           {hasLoading && <span className="cal-day-loading" style={isLight ? { background: '#fff' } : undefined} />}
+          {hasCarwash && <span className="cal-day-carwash" style={isLight ? { background: '#fff' } : undefined} />}
           {hasBusinessTrip && <span className="cal-day-trip" style={isLight ? { color: '#fff' } : undefined}>✈</span>}
         </div>
       )}
